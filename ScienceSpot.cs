@@ -6,8 +6,6 @@ using UnityEngine;
 
 namespace RoverScience
 {
-
-
 	public class ScienceSpot
 	{
 

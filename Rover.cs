@@ -205,16 +205,17 @@ namespace RoverScience
 
 		private int getWheelsLanded()
 		{
-
 			int count = 0;
-
 			List<Part> vesselParts = FlightGlobals.ActiveVessel.Parts; 
 			foreach (Part part in vesselParts) {
 				foreach (PartModule module in part.Modules) {
-					if ((module.moduleName == "ModuleWheelBase") && (part.GroundContact)) {
-						count++;
+                    if ((module.moduleName.IndexOf("wheel", StringComparison.OrdinalIgnoreCase) >= 0)) {
+                        if (part.GroundContact)
+                            {
+                                count++;
+                            }
+                        }
 					}
-				}
 			}
 			return count;
 		}

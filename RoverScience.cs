@@ -15,7 +15,7 @@ namespace RoverScience
 	public class RoverScience : PartModule
 	{
 		// Not necessarily updated per build. Mostly updated per major commits
-		public readonly string RSVersion = "2.0";
+		public readonly string RSVersion = "2.01";
 		public static RoverScience Instance = null;
 		public System.Random rand = new System.Random ();
 		public ModuleScienceContainer container;
@@ -106,43 +106,54 @@ namespace RoverScience
 
         public void OnGUI()
         {
+            //if (rover.scienceSpot.established)
+            //{
+              //  DrawWaypointGUI.Draw(rover);
+            //}
+
             roverScienceGUI.drawGUI();
         }
 
-		public override void OnLoad (ConfigNode vesselNode)
-		{
-			try {
+        public override void OnLoad (ConfigNode vesselNode)
+        {
+            Instance = this;
 
-				saveGame = HighLogic.SaveFolder;
-				fileName = KSPUtil.ApplicationRootPath + "saves/" + saveGame + "/" + "RS" + ".save";
-				Debug.Log ("ONLOAD HAS ATTEMPTED TO LOAD FROM THIS PATH: " + fileName);
-				Debug.Log ("ONLOAD - saveGame: " + saveGame);
+        }
 
-				if ((HighLogic.LoadedSceneIsFlight) && (FlightGlobals.ActiveVessel != null)) {
-					if (vesselNode.HasValue ("amountOfTimesAnalyzed")) {
-						amountOfTimesAnalyzed = Convert.ToInt32 (vesselNode.GetValue ("amountOfTimesAnalyzed"));
-						Debug.Log ("Loaded GetValue: " + vesselNode.GetValue ("amountOfTimesAnalyzed"));
-						Debug.Log ("Loaded amountOfTimesAnalyzed: " + amountOfTimesAnalyzed);
-					} else {
-						amountOfTimesAnalyzed = 0;
-						Debug.Log ("No node found for analyzeDelayCheck");
-						Debug.Log ("analyzeDelayCheck is now: " + amountOfTimesAnalyzed);
-					}
+		//public override void OnLoad (ConfigNode vesselNode)
+		//{
+		//	try {
 
-                    // LOAD UPGRADES HERE
-					if (!loadUpgrades()) Debug.Log ("#RS - failed to loadUpgrades");
-				}
-			} catch {
-				Debug.Log ("RoverScience OnLoad() Catch: SCENE: " + HighLogic.LoadedScene);
-			}
+		//		saveGame = HighLogic.SaveFolder;
+		//		fileName = KSPUtil.ApplicationRootPath + "saves/" + saveGame + "/" + "RS" + ".save";
+		//		Debug.Log ("ONLOAD HAS ATTEMPTED TO LOAD FROM THIS PATH: " + fileName);
+		//		Debug.Log ("ONLOAD - saveGame: " + saveGame);
 
-		}
+		//		if ((HighLogic.LoadedSceneIsFlight) && (FlightGlobals.ActiveVessel != null)) {
+		//			if (vesselNode.HasValue ("amountOfTimesAnalyzed")) {
+		//				amountOfTimesAnalyzed = Convert.ToInt32 (vesselNode.GetValue ("amountOfTimesAnalyzed"));
+		//				Debug.Log ("Loaded GetValue: " + vesselNode.GetValue ("amountOfTimesAnalyzed"));
+		//				Debug.Log ("Loaded amountOfTimesAnalyzed: " + amountOfTimesAnalyzed);
+		//			} else {
+		//				amountOfTimesAnalyzed = 0;
+		//				Debug.Log ("No node found for analyzeDelayCheck");
+		//				Debug.Log ("analyzeDelayCheck is now: " + amountOfTimesAnalyzed);
+		//			}
 
-		public override void OnSave (ConfigNode node)
-		{
-            // SAVE UPGRADES HERE
-			if (!saveUpgrades ()) Debug.Log ("#RS - failed to saveUpgrades!");
-		}
+  //                  // LOAD UPGRADES HERE
+		//			if (!loadUpgrades()) Debug.Log ("#RS - failed to loadUpgrades");
+		//		}
+		//	} catch {
+		//		Debug.Log ("RoverScience OnLoad() Catch: SCENE: " + HighLogic.LoadedScene);
+		//	}
+
+		//}
+
+		//public override void OnSave (ConfigNode node)
+		//{
+  //          // SAVE UPGRADES HERE
+		//	if (!saveUpgrades ()) Debug.Log ("#RS - failed to saveUpgrades!");
+		//}
 
 		public override void OnStart (PartModule.StartState state)
 		{
@@ -452,6 +463,16 @@ namespace RoverScience
                 default:
                     return -1;
             }
+        }
+
+        public void setUpgradeLevel(RSUpgrade upgradeType, int newValue)
+        {
+                if (upgradeType == RSUpgrade.maxDistance) {
+                    levelMaxDistance = newValue;
+                }
+                if (upgradeType == RSUpgrade.predictionAccuracy) {
+                    levelPredictionAccuracy = newValue;
+                }       
         }
 
         public int getUpgradeMaxLevel(RSUpgrade upgradeType)
