@@ -126,7 +126,7 @@ namespace RoverScience
 
 		public double getDistanceBetweenTwoPoints(COORDS _from, COORDS _to)
 		{
-
+            
             double bodyRadius = vessel.mainBody.Radius;
 			double dLat = (_to.latitude - _from.latitude).ToRadians();
 			double dLon = (_to.longitude - _from.longitude).ToRadians();

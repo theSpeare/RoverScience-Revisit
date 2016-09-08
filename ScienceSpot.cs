@@ -214,7 +214,12 @@ namespace RoverScience
             Debug.Log(" ");
             Debug.Log("randomRadius selected: " + randomRadius);
             Debug.Log("distance to ScienceSpot: " + rover.distanceFromScienceSpot);
+
+            Debug.Log("lat/long: " + location.latitude + " " + location.longitude);
             Debug.Log("==================");
+
+            DrawWaypoint.Instance.setMarkerLocation(location.longitude, location.latitude, vessel.altitude);
+            DrawWaypoint.Instance.showMarker();
         }
 
         
@@ -247,6 +252,8 @@ namespace RoverScience
 
 			rover.resetDistanceTraveled ();
 			rover.distanceTraveledTotal = 0;
+
+            DrawWaypoint.Instance.hideMarker();
 		}
 	}
 

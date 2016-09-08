@@ -1,0 +1,7 @@
+Releases/RoverScience-2.0.0.zip
+*.zip
+bin/Debug/RoverScience.dll
+*.pdb
+bin/Debug/RoverScience.dll
+*.dll
+*.dll
