@@ -218,7 +218,8 @@ namespace RoverScience
             Debug.Log("lat/long: " + location.latitude + " " + location.longitude);
             Debug.Log("==================");
 
-            DrawWaypoint.Instance.setMarkerLocation(location.longitude, location.latitude, vessel.altitude);
+            //DrawWaypoint.Instance.setMarkerLocation(location.longitude, location.latitude, vessel.altitude);
+            DrawWaypoint.Instance.setMarkerLocation(location.longitude, location.latitude);
             DrawWaypoint.Instance.showMarker();
         }
 

@@ -122,7 +122,8 @@ namespace RoverScience
 			if (GUILayout.Button ("Reset Science Site")) {
 				rover.scienceSpot.established = false;
 				rover.resetDistanceTraveled ();
-				consolePrintOut.Clear ();
+                DrawWaypoint.Instance.hideMarker();
+                consolePrintOut.Clear ();
 
 			}
 			
@@ -158,6 +159,8 @@ namespace RoverScience
 				rover.scienceSpot.established = false;
 				rover.resetDistanceTraveled ();
 				consolePrintOut.Clear ();
+
+                DrawWaypoint.Instance.hideMarker();
 
 				consoleGUI.hide ();
 				upgradeGUI.hide ();

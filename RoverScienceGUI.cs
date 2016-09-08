@@ -43,7 +43,7 @@ namespace RoverScience
 		private Rover rover
 		{
 			get{
-				return roverScience.rover;
+				return RoverScience.Instance.rover;
 			}
 		}
 
@@ -72,7 +72,6 @@ namespace RoverScience
 			if (debugGUI.isOpen) {
 			    debugGUI.rect = GUILayout.Window (9358921, debugGUI.rect, drawDebugGUI, "Debug");
 			}
-
 		}
 
 		public void addToConsole (string line)

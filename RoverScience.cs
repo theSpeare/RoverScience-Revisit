@@ -15,7 +15,7 @@ namespace RoverScience
 	public class RoverScience : PartModule
 	{
 		// Not necessarily updated per build. Mostly updated per major commits
-		public readonly string RSVersion = "2.01";
+		public readonly string RSVersion = "2.02";
 		public static RoverScience Instance = null;
 		public System.Random rand = new System.Random ();
 		public ModuleScienceContainer container;
@@ -86,11 +86,12 @@ namespace RoverScience
 			}
 		}
 
-		[KSPEvent (guiActive = true, guiName = "Activate Rover Terminal")]
+		[KSPEvent (guiActive = true, guiName = "Toggle Rover Terminal")]
 		private void showGUI ()
 		{
 			roverScienceGUI.consoleGUI.toggle ();
-		}
+            DrawWaypoint.Instance.toggleMarker();
+        }
 
 		[KSPAction ("Activate Console", actionGroup = KSPActionGroup.None)]
 		private void showGUIAction (KSPActionParam param)
@@ -106,11 +107,6 @@ namespace RoverScience
 
         public void OnGUI()
         {
-            //if (rover.scienceSpot.established)
-            //{
-              //  DrawWaypointGUI.Draw(rover);
-            //}
-
             roverScienceGUI.drawGUI();
         }
 
@@ -547,8 +543,9 @@ namespace RoverScience
 
 			if (HighLogic.LoadedSceneIsFlight) {
 				// CONSOLE WINDOW
-				if (Input.GetKey (KeyCode.LeftControl) && Input.GetKey (KeyCode.R) && Input.GetKey (KeyCode.S)) {
-					roverScienceGUI.consoleGUI.show ();
+				if (Input.GetKeyUp (KeyCode.LeftControl) && Input.GetKeyUp (KeyCode.R) && Input.GetKeyUp (KeyCode.S)) {
+					roverScienceGUI.consoleGUI.toggle ();
+                    DrawWaypoint.Instance.toggleMarker();
 				}
 
 				// DEBUG WINDOW

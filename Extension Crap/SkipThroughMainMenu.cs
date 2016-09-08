@@ -4,8 +4,8 @@ using UnityEngine;
 namespace RoverScience
 {
 	//SKIPS THROUGH MAIN MENU
-	[KSPAddonFixed(KSPAddon.Startup.MainMenu, true, typeof(Debug_AutoLoadQuicksaveOnStartup))]
-	public class Debug_AutoLoadQuicksaveOnStartup: MonoBehaviour
+	[KSPAddon(KSPAddon.Startup.MainMenu, true)]
+	public class SkipThroughMainMenu: MonoBehaviour
 	{
 		public static bool first = false;
 
