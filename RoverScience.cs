@@ -173,7 +173,7 @@ namespace RoverScience
 					Debug.Log ("ONSTART - Not primary");
 				}
 
-                if (Instance = null)
+                if (Instance == null)
                 {
                     Instance = this;
                     Debug.Log("Instance was null; workaround fix by declaring Instance anyway");

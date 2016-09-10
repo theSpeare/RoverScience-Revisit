@@ -25,79 +25,72 @@ namespace RoverScience
         float minAlpha = 0.5f;
 
         public static DrawWaypoint Instance = null;
-        Color sphereColorRed = Color.red;
-        Color sphereColorGreen = Color.green;
+        Color markerColorRed = Color.red;
+        Color markerColorGreen = Color.green;
 
         private void Start()
         {
             Debug.Log("Attempting to create sphere");
             Instance = this;
 
-            marker = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-            Destroy(marker.GetComponent("CapsuleCollider"));
+            marker = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            Destroy(marker.GetComponent("SphereCollider"));
             // Set initial position
             //marker.transform.localScale = new Vector3(markerSize, markerSize, markerSize);
-            marker.transform.localScale = new Vector3(markerSize, 2000, markerSize);
+            marker.transform.localScale = new Vector3(markerSize, markerSize, markerSize);
             marker.transform.position = FlightGlobals.currentMainBody.GetWorldSurfacePosition(0, 0, 0);
-
-            //Quaternion rotationAngleUp = Quaternion.FromToRotation(marker.transform.transform)
-            Debug.Log("RSR: trying to rotate cylinder");
-            Debug.Log("before marker rotation:");
-            Debug.Log(marker.transform.rotation);
-
-            //marker.transform.rotation = marker.transform.rotation * Quaternion.FromToRotation(marker.transform.forward, FlightGlobals.ActiveVessel.terrainNormal);
-            //marker.transform.forward = FlightGlobals.ActiveVessel.terrainNormal;
-
-            Debug.Log("marker transform vector forward:");
-            Debug.Log(marker.transform.forward);
-
-            Debug.Log("marker transform vector up:");
-            Debug.Log(marker.transform.up);
-
-            Debug.Log("marker transform vector terrain normal:");
-            Debug.Log(FlightGlobals.ActiveVessel.terrainNormal);
-
-            Debug.Log("after marker rotation:");
-            Debug.Log(marker.transform.rotation);
-
-            Debug.Log("RSR: ended rotate cylinder");
 
             hideMarker(); // do not render marker yet
 
             // Set marker material, color and alpha
             marker.GetComponent<MeshRenderer>().material = new Material(Shader.Find("Transparent/Diffuse"));
 
-            sphereColorRed.a = markerAlpha; // max alpha
-            sphereColorGreen.a = markerAlpha; // max alpha
+            markerColorRed.a = markerAlpha; // max alpha
+            markerColorGreen.a = markerAlpha; // max alpha
 
-            marker.GetComponent<MeshRenderer>().material.color = sphereColorRed;
+            marker.GetComponent<MeshRenderer>().material.color = markerColorRed; // set to red on awake
             Debug.Log("Reached end of marker creation");
         }
 
         public void setMarkerLocation(double longitude, double latitude)
         {
-            double altitude = FlightGlobals.ActiveVessel.altitude;
-
-            Debug.Log("Drawing marker @ (long/lat/alt): " + longitude.ToString() + " " + latitude.ToString() + " " + altitude.ToString());
-            marker.transform.position = FlightGlobals.currentMainBody.GetWorldSurfacePosition(latitude, longitude, FlightGlobals.ActiveVessel.altitude);
-            //marker.transform.rotation = Quaternion.FromToRotation(marker.transform.forward, FlightGlobals.ActiveVessel.terrainNormal);
-            //marker.transform.forward = FlightGlobals.ActiveVessel.terrainNormal;
-
             Vector3 bottomPoint = FlightGlobals.currentMainBody.GetWorldSurfacePosition(latitude, longitude, 0);
             Vector3 topPoint = FlightGlobals.currentMainBody.GetWorldSurfacePosition(latitude, longitude, 1000);
-            Vector3 cylinderDirection = topPoint - bottomPoint;
 
-            marker.transform.up = cylinderDirection;
+            double surfaceAltitude = getSurfaceAltitude(longitude, latitude);
+            Debug.Log("Drawing marker @ (long/lat/alt): " + longitude.ToString() + " " + latitude.ToString() + " " + surfaceAltitude.ToString());
+            marker.transform.position = FlightGlobals.currentMainBody.GetWorldSurfacePosition(latitude, longitude, surfaceAltitude);
 
-            marker.transform.localScale = new Vector3(markerSizeMax, 2000, markerSizeMax);
-            sphereColorRed.a = maxAlpha;
+            //marker.transform.up = cylinderDirectionUp;
 
+            marker.transform.localScale = new Vector3(markerSizeMax, markerSizeMax, markerSizeMax);
+            markerColorRed.a = maxAlpha;
+
+            //attempt to get raycast surface altitude
+            
+        }
+
+        public double getSurfaceAltitude(double longitude, double latitude)
+        {
+            double altitude = 20000;
+            RaycastHit hit;
+            Vector3d topPoint = FlightGlobals.currentMainBody.GetWorldSurfacePosition(latitude, longitude, altitude);
+            Vector3d bottomPoint = FlightGlobals.currentMainBody.GetWorldSurfacePosition(latitude, longitude, -altitude);
+
+            Debug.Log("RSR: attempting raycast");
+            if (Physics.Raycast(topPoint, (bottomPoint-topPoint), out hit, Mathf.Infinity, 1<<15))
+            {
+                return (altitude - hit.distance);
+            } else
+            {
+                Debug.Log("RSR: No collision detected!");
+            }
+
+            return -1;
         }
 
         public void showMarker()
         {
-            Debug.Log("RS: showing marker");
-
             if (RoverScience.Instance.rover.scienceSpot.established)
             {
                 marker.GetComponent<MeshRenderer>().enabled = true;
@@ -106,7 +99,6 @@ namespace RoverScience
 
         public void hideMarker()
         {
-            Debug.Log("RS: hiding marker");
             marker.GetComponent<MeshRenderer>().enabled = false;
         }
 
@@ -142,16 +134,16 @@ namespace RoverScience
                     markerAlpha = minAlpha;
                 }
 
-                sphereColorRed.a = markerAlpha;
-                sphereColorGreen.a = markerAlpha;
+                markerColorRed.a = markerAlpha;
+                markerColorGreen.a = markerAlpha;
 
             }
 
             if ((distance <= 3) && (distance >= 0))
             {
-                marker.GetComponent<MeshRenderer>().material.color = sphereColorGreen;
+                marker.GetComponent<MeshRenderer>().material.color = markerColorGreen;
             } else {
-                marker.GetComponent<MeshRenderer>().material.color = sphereColorRed;
+                marker.GetComponent<MeshRenderer>().material.color = markerColorRed;
             }
 
             //Debug.Log("dist, dist/50, alpha: [" + distance + " / " + distance / 50 + " / " + markerAlpha + "]");
