@@ -61,6 +61,8 @@ namespace RoverScience
 	                    established = true;
 
 	                    Debug.Log("Landing site has been established!");
+
+                        rover.setClosestAnomaly(vessel.mainBody.name);
 	                }
 			
             }

@@ -8,6 +8,8 @@ namespace RoverScience
 {
 	public partial class RoverScienceGUI
 	{
+        private string anomalyVisitedAdd = "1";
+
 		private void drawDebugGUI (int windowID)
 		{
 
@@ -28,18 +30,36 @@ namespace RoverScience
 			GUILayout.Label ("with decay: " + rover.scienceSpot.potentialScience * roverScience.scienceDecayScalar);
 			GUILayout.Label ("with distanceScalarBoost & decay & bodyScalar: " + rover.scienceSpot.potentialScience * 
 				roverScience.scienceDecayScalar * roverScience.scienceMaxRadiusBoost * roverScience.bodyScienceScalar);
+            GUIBreakline();
+            GUILayout.Label("Closest Anomaly ID: " + roverScience.rover.closestAnomaly.id);
+            GUILayout.Label("Closest Anomaly Name: " + roverScience.rover.closestAnomaly.name);
+            GUILayout.Label("Has current anomaly been analyzed? " + "[" + Anomalies.Instance.hasCurrentAnomalyBeenAnalyzed() + "]");
+
+            GUILayout.BeginHorizontal();
+            anomalyVisitedAdd = GUILayout.TextField(anomalyVisitedAdd, 3, new GUILayoutOption[] { GUILayout.Width(50) });
+            if (GUILayout.Button("add anomaly ID"))
+            {
+                rover.anomaliesAnalyzed.Add(anomalyVisitedAdd);
+            }
+            if (GUILayout.Button("X"))
+            {
+                rover.anomaliesAnalyzed.Clear();
+            }
+            GUILayout.EndHorizontal();
+            GUILayout.Label("anomaly id visited: " + string.Join(",", rover.anomaliesAnalyzed.ToArray()));
 
 
 
 
 			if (GUILayout.Button ("Find Science Spot")) {
-				rover.scienceSpot.setLocation (rover.minRadius, rover.maxRadius);
+				rover.scienceSpot.setLocation (random: true);
 			}
+            
 
 
-			if (GUILayout.Button ("Cheat Spot Here")) {
+            if (GUILayout.Button ("Cheat Spot Here")) {
 				if ((!rover.scienceSpot.established) && (consoleGUI.isOpen)) {
-					rover.scienceSpot.setLocation (0, 1);
+					rover.scienceSpot.setLocation (vessel.longitude, vessel.latitude);
 				} else if (rover.scienceSpot.established){
 					rover.scienceSpot.reset ();
 				}

@@ -33,6 +33,8 @@ namespace RoverScience
 		public int minRadius = 40;
 		public int maxRadius = 100;
 
+        public List<string> anomaliesAnalyzed = new List<string>();
+
 		public double distanceFromLandingSpot
 		{
 			get{
@@ -80,7 +82,7 @@ namespace RoverScience
 		{
 			get {
 				if (scienceSpot.established) {
-					if (distanceFromScienceSpot <= 3) {
+					if (distanceFromScienceSpot <= scienceSpot.minDistance) {
 						return true;
 					}
 				}
@@ -88,7 +90,22 @@ namespace RoverScience
 			}
 		}
 
-		public int numberWheelsLanded
+        public bool anomalySpotReached
+        {
+            get
+            {
+                if (scienceSpot.established)
+                {
+                    if (distanceToClosestAnomaly <= scienceSpot.minDistance)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+
+        public int numberWheelsLanded
 		{
 			get
 			{
@@ -112,7 +129,15 @@ namespace RoverScience
             }
         }
 
-		public void calculateDistanceTraveled(double deltaTime)
+        public double distanceToClosestAnomaly
+        {
+            get
+            {
+                return getDistanceBetweenTwoPoints(location, closestAnomaly.location);
+            }
+        }
+
+        public void calculateDistanceTraveled(double deltaTime)
 		{
 			distanceTraveled += (roverScience.vessel.srfSpeed) * deltaTime;
             if (!scienceSpot.established) distanceTraveledTotal += (roverScience.vessel.srfSpeed) * deltaTime;
@@ -220,8 +245,59 @@ namespace RoverScience
 			return count;
 		}
 
+        List<Anomalies.Anomaly> anomaliesList = new List<Anomalies.Anomaly>();
+        public Anomalies.Anomaly closestAnomaly = new Anomalies.Anomaly();
 
-	}
+        public void setClosestAnomaly(string bodyName)
+        {
+            // this is run on establishing landing spot (to avoid expensive constant foreach loops
+
+            setRoverLocation(); // (update rover location)
+            double distanceClosest = 0;
+            double distanceCheck = 0;
+
+            if (Anomalies.Instance.hasAnomalies(bodyName))
+            {
+                anomaliesList = Anomalies.Instance.getAnomalies(bodyName);
+
+                closestAnomaly = anomaliesList[0]; // set initial
+
+                // check and find closest anomaly
+                int i = 0;
+                foreach (Anomalies.Anomaly anomaly in anomaliesList)
+                {
+                    distanceClosest = getDistanceBetweenTwoPoints(location, closestAnomaly.location);
+                    distanceCheck = getDistanceBetweenTwoPoints(location, anomaly.location);
+
+                    Debug.Log("========" + i + "========");
+                    Debug.Log("distanceClosest: " + distanceClosest);
+                    Debug.Log("distanceCheck: " + distanceCheck);
+
+                    Debug.Log("Current lat/long: " + location.latitude + "/" + location.longitude);
+                    Debug.Log("Closest Anomaly lat/long: " + closestAnomaly.location.latitude + "/" + closestAnomaly.location.longitude);
+                    Debug.Log("Check Anomaly lat/long: " + anomaly.location.latitude + "/" + anomaly.location.longitude);
+
+                    Debug.Log("==========<END>==========");
+
+
+                    if (distanceCheck < distanceClosest)
+                    {
+                        closestAnomaly = anomaly;
+                    }
+                    i++;
+                }
+
+                distanceClosest = getDistanceBetweenTwoPoints(location, closestAnomaly.location);
+                Debug.Log("======= RS: closest anomaly details =======");
+                Debug.Log("long/lat: " + closestAnomaly.location.longitude + "/" + closestAnomaly.location.latitude);
+                Debug.Log("instantaneous distance: " + getDistanceBetweenTwoPoints(location, closestAnomaly.location));
+                Debug.Log("id: " + closestAnomaly.id);
+                Debug.Log("name: " + closestAnomaly.name);
+                Debug.Log("=== RS: closest anomaly details <<END>>====");
+            }
+        }
+
+    }
 
 
 	public static class NumericExtensions

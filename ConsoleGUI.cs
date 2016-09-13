@@ -66,11 +66,12 @@ namespace RoverScience
                         GUIBreakline();
 						GUIBreakline();
 
-						GUILayout.BeginHorizontal ();
-						GUILayout.FlexibleSpace ();
-						GUILayout.Label(getDriveDirection(rover.bearingToScienceSpot, rover.heading));
-						GUILayout.FlexibleSpace ();
-						GUILayout.EndHorizontal ();
+                        //This block handles writing getDriveDirection
+						//GUILayout.BeginHorizontal ();
+						//GUILayout.FlexibleSpace ();
+						//GUILayout.Label(getDriveDirection(rover.bearingToScienceSpot, rover.heading));
+						//GUILayout.FlexibleSpace ();
+						//GUILayout.EndHorizontal ();
                     }
                     else
                     {
@@ -122,6 +123,7 @@ namespace RoverScience
 			if (GUILayout.Button ("Reset Science Site")) {
 				rover.scienceSpot.established = false;
 				rover.resetDistanceTraveled ();
+                DrawWaypoint.Instance.DestroyInterestingObject();
                 DrawWaypoint.Instance.hideMarker();
                 consolePrintOut.Clear ();
 

@@ -4,10 +4,6 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using KSP;
-using KSP.UI.Screens;
-using Contracts;
-using FinePrint;
-using FinePrint.Utilities;
 
 namespace RoverScience
 {
@@ -16,17 +12,23 @@ namespace RoverScience
     [KSPAddon(KSPAddon.Startup.Flight, false)]
     public class DrawWaypoint : MonoBehaviour
     {
+        System.Random rand = new System.Random();
+
         private GameObject marker = null;
+        private GameObject interestingObject;
+
         float markerSize = 30;
         float markerSizeMax = 30;
 
         float markerAlpha = 0.7f;
         float maxAlpha = 0.7f;
-        float minAlpha = 0.5f;
+        float minAlpha = 0.05f;
 
         public static DrawWaypoint Instance = null;
         Color markerColorRed = Color.red;
         Color markerColorGreen = Color.green;
+
+        string[] rockObjectNames = {"rock", "rock2"};
 
         private void Start()
         {
@@ -52,8 +54,15 @@ namespace RoverScience
             Debug.Log("Reached end of marker creation");
         }
 
-        public void setMarkerLocation(double longitude, double latitude)
+        public void DestroyInterestingObject()
         {
+            if (interestingObject != null) Destroy(interestingObject);
+        }
+
+        public void setMarkerLocation(double longitude, double latitude, bool spawningObject = true)
+        {
+            DestroyInterestingObject();
+
             Vector3 bottomPoint = FlightGlobals.currentMainBody.GetWorldSurfacePosition(latitude, longitude, 0);
             Vector3 topPoint = FlightGlobals.currentMainBody.GetWorldSurfacePosition(latitude, longitude, 1000);
 
@@ -67,7 +76,24 @@ namespace RoverScience
             markerColorRed.a = maxAlpha;
 
             //attempt to get raycast surface altitude
-            
+
+            if (spawningObject) spawnObject(longitude, latitude);
+        }
+
+        private Vector3 getUpDown(double longitude, double latitude, bool up = true)
+        {
+            double altitude = 20000;
+
+            Vector3d topPoint = FlightGlobals.currentMainBody.GetWorldSurfacePosition(latitude, longitude, altitude);
+            Vector3d bottomPoint = FlightGlobals.currentMainBody.GetWorldSurfacePosition(latitude, longitude, -altitude);
+
+            if (up)
+            {
+                return topPoint - bottomPoint;
+            } else {
+                return bottomPoint - topPoint;
+            }
+
         }
 
         public double getSurfaceAltitude(double longitude, double latitude)
@@ -76,9 +102,9 @@ namespace RoverScience
             RaycastHit hit;
             Vector3d topPoint = FlightGlobals.currentMainBody.GetWorldSurfacePosition(latitude, longitude, altitude);
             Vector3d bottomPoint = FlightGlobals.currentMainBody.GetWorldSurfacePosition(latitude, longitude, -altitude);
+            
 
-            Debug.Log("RSR: attempting raycast");
-            if (Physics.Raycast(topPoint, (bottomPoint-topPoint), out hit, Mathf.Infinity, 1<<15))
+            if (Physics.Raycast(topPoint, (bottomPoint - topPoint), out hit, Mathf.Infinity, 1 << 15))
             {
                 return (altitude - hit.distance);
             } else
@@ -116,13 +142,15 @@ namespace RoverScience
 
         private void changeSpherewithDistance(Rover rover)
         {
+
             float distance = (float)rover.distanceFromScienceSpot;
 
-            if ((distance < markerSizeMax) && (distance > 5))
+
+            if ((distance < markerSizeMax) && ((distance > rover.scienceSpot.minDistance)))
             {
                 // Reduce sphere size with proximity
                 markerSize = distance;
-                marker.transform.localScale = new Vector3(markerSize, 2000, markerSize);
+                marker.transform.localScale = new Vector3(markerSize, markerSize, markerSize);
 
                 // Reduce alpha with proximity
                 markerAlpha = (float)(distance / markerSizeMax);
@@ -139,7 +167,9 @@ namespace RoverScience
 
             }
 
-            if ((distance <= 3) && (distance >= 0))
+
+
+            if ((distance <= (rover.scienceSpot.minDistance - 2)) && (distance >= 0))
             {
                 marker.GetComponent<MeshRenderer>().material.color = markerColorGreen;
             } else {
@@ -148,29 +178,39 @@ namespace RoverScience
 
             //Debug.Log("dist, dist/50, alpha: [" + distance + " / " + distance / 50 + " / " + markerAlpha + "]");
         }
-        
+
+
+        public void spawnObject(double longitude, double latitude)
+        {
+            Debug.Log("RSR: Attempting to spawn object");
+            string randomRockName = rockObjectNames[rand.Next(rockObjectNames.Length)];
+            GameObject test = GameDatabase.Instance.GetModel("RoverScience/rock/" + randomRockName);
+            Debug.Log("Random rock name: " + randomRockName);
+            test.SetActive(true);
+
+            interestingObject = GameObject.Instantiate(test) as GameObject;
+            GameObject.Destroy(test);
+
+            GameObject.Destroy(interestingObject.GetComponent("MeshCollider"));
+            double srfAlt = DrawWaypoint.Instance.getSurfaceAltitude(longitude, latitude);
+            interestingObject.transform.position = FlightGlobals.currentMainBody.GetWorldSurfacePosition(latitude, longitude, srfAlt);
+            interestingObject.transform.up = getUpDown(longitude, latitude, true);
+        }
+
+
+
         private void Update()
         {
             if (marker.GetComponent<MeshRenderer>().enabled)
             {
                 changeSpherewithDistance(RoverScience.Instance.rover);
-
-                // avoid rendering if rover is somehow flown up super high by player
-                if (FlightGlobals.ActiveVessel.altitude > 5000)
-                {
-                    hideMarker();
-                }
-                else
-                {
-                    showMarker();
-                }
-
             }
         }
 
         private void OnDestroy()
         {
             Destroy(marker);
+            DestroyInterestingObject();
         }
 
 

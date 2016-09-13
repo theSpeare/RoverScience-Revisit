@@ -42,12 +42,7 @@ namespace RoverScience
 				return getUpgradeValue(RSUpgrade.maxDistance, levelMaxDistance);
             }
         }
-
-		private static string saveGame = HighLogic.SaveFolder;
-		private static string fileName = KSPUtil.ApplicationRootPath + "saves/" + saveGame + "/" + "RS" + ".save";
-
-		ConfigNode currentSave;
-
+       
 		public RoverScienceGUI roverScienceGUI = new RoverScienceGUI();
 		public double distCounter;
 		[KSPField (isPersistant = true)]
@@ -116,41 +111,6 @@ namespace RoverScience
 
         }
 
-		//public override void OnLoad (ConfigNode vesselNode)
-		//{
-		//	try {
-
-		//		saveGame = HighLogic.SaveFolder;
-		//		fileName = KSPUtil.ApplicationRootPath + "saves/" + saveGame + "/" + "RS" + ".save";
-		//		Debug.Log ("ONLOAD HAS ATTEMPTED TO LOAD FROM THIS PATH: " + fileName);
-		//		Debug.Log ("ONLOAD - saveGame: " + saveGame);
-
-		//		if ((HighLogic.LoadedSceneIsFlight) && (FlightGlobals.ActiveVessel != null)) {
-		//			if (vesselNode.HasValue ("amountOfTimesAnalyzed")) {
-		//				amountOfTimesAnalyzed = Convert.ToInt32 (vesselNode.GetValue ("amountOfTimesAnalyzed"));
-		//				Debug.Log ("Loaded GetValue: " + vesselNode.GetValue ("amountOfTimesAnalyzed"));
-		//				Debug.Log ("Loaded amountOfTimesAnalyzed: " + amountOfTimesAnalyzed);
-		//			} else {
-		//				amountOfTimesAnalyzed = 0;
-		//				Debug.Log ("No node found for analyzeDelayCheck");
-		//				Debug.Log ("analyzeDelayCheck is now: " + amountOfTimesAnalyzed);
-		//			}
-
-  //                  // LOAD UPGRADES HERE
-		//			if (!loadUpgrades()) Debug.Log ("#RS - failed to loadUpgrades");
-		//		}
-		//	} catch {
-		//		Debug.Log ("RoverScience OnLoad() Catch: SCENE: " + HighLogic.LoadedScene);
-		//	}
-
-		//}
-
-		//public override void OnSave (ConfigNode node)
-		//{
-  //          // SAVE UPGRADES HERE
-		//	if (!saveUpgrades ()) Debug.Log ("#RS - failed to saveUpgrades!");
-		//}
-
 		public override void OnStart (PartModule.StartState state)
 		{
 			if (HighLogic.LoadedSceneIsFlight) {
@@ -169,7 +129,10 @@ namespace RoverScience
 					rover = new Rover ();
 					rover.scienceSpot = new ScienceSpot (Instance);
 					rover.landingSpot = new LandingSpot (Instance);
-				} else {
+
+                    rover.setClosestAnomaly(vessel.mainBody.bodyName);
+
+                } else {
 					Debug.Log ("ONSTART - Not primary");
 				}
 
@@ -192,10 +155,15 @@ namespace RoverScience
 						rover.calculateDistanceTraveled (TimeWarp.deltaTime);
 
 					rover.landingSpot.setSpot ();
-					if (rover.landingSpot.established)
-						rover.setRoverLocation ();
-					if ((!rover.scienceSpot.established) && (!rover.scienceSpotReached))
-						rover.scienceSpot.checkAndSet ();
+                    if (rover.landingSpot.established)
+                    {
+                        rover.setRoverLocation();
+                    }
+
+                    if ((!rover.scienceSpot.established) && (!rover.scienceSpotReached))
+                    {
+                        rover.scienceSpot.checkAndSet();
+                    }
 				}
 			}
 
@@ -207,7 +175,6 @@ namespace RoverScience
 		{
 			if (rover.scienceSpotReached) {
 
-                
 				ScienceExperiment sciExperiment = ResearchAndDevelopment.GetExperiment ("RoverScienceExperiment");
 				ScienceSubject sciSubject = ResearchAndDevelopment.GetExperimentSubject (sciExperiment, ExperimentSituations.SrfLanded, vessel.mainBody, "");
 
@@ -218,12 +185,35 @@ namespace RoverScience
 				// Divide by 20 to convert to data form
 				float sciData = (rover.scienceSpot.potentialScience) / sciSubject.subjectValue;
 				Debug.Log ("sciData (potential/20)" + sciData);
-				// Apply decay
-				sciData = sciData * scienceDecayScalar * bodyScienceScalar * scienceMaxRadiusBoost;
-				Debug.Log ("rover.scienceSpot.potentialScience: " + rover.scienceSpot.potentialScience);
-				Debug.Log ("sciData (post scalar): " + sciData);
-				Debug.Log ("scienceDecayScalar: " + scienceDecayScalar);
-				Debug.Log ("bodyScienceScalar: " + bodyScienceScalar);
+
+
+                // Apply multipliers
+
+                if (rover.anomalySpotReached)
+                {
+                    Debug.Log("RS: added anomaly id to save!");
+                    Debug.Log("RS: analyzed science at anomaly");
+
+                    if (!rover.anomaliesAnalyzed.Contains(rover.closestAnomaly.id))
+                    {
+                        rover.anomaliesAnalyzed.Add(rover.closestAnomaly.id);
+                    }
+
+                } else
+                {
+                    // if a normal spot, we shall apply factors
+                    Debug.Log("RS: analyzed science at science spot");
+                    sciData = sciData * scienceDecayScalar * bodyScienceScalar * scienceMaxRadiusBoost;
+                }
+                
+
+
+                Debug.Log("RS: rover.scienceSpot.potentialScience: " + rover.scienceSpot.potentialScience);
+                Debug.Log("RS: sciData (post scalar): " + sciData);
+                Debug.Log("RS: scienceDecayScalar: " + scienceDecayScalar);
+                Debug.Log("RS: bodyScienceScalar: " + bodyScienceScalar);
+               
+				
 
 				if (sciData > 0.1) {
 					if (StoreScience (container, sciSubject, sciData)) {
@@ -324,61 +314,7 @@ namespace RoverScience
 
 			return (scalar * scienceCap);
 		}
-
-
-		public bool loadUpgrades ()
-		{
-			if (!HighLogic.LoadedSceneIsFlight)
-				return false;
-
-			currentSave = ConfigNode.Load (fileName);
-
-			try {
-				if ((currentSave == null) || (!(currentSave.HasNode ("RoverScience")))) {
-					Debug.LogError ("#Save file was empty. Should be creating new ConfigNode");
-					currentSave = new ConfigNode ();
-					currentSave.AddNode ("RoverScience");
-				} else {
-					Debug.Log ("#Save file was found - loading...");
-				}
-
-				ConfigNode mainNode = currentSave.GetNode ("RoverScience");
-
-				if (mainNode.HasValue ("levelMaxDistance")) {
-					levelMaxDistance = Convert.ToInt32 (mainNode.GetValue ("levelMaxDistance"));
-				} else {
-					mainNode.AddValue ("levelMaxDistance", levelMaxDistance);
-				}
-
-				if (mainNode.HasValue ("levelDetectionAccuracy")) {
-					levelPredictionAccuracy = Convert.ToInt32 (mainNode.GetValue ("levelDetectionAccuracy"));
-				} else {
-					mainNode.AddValue ("levelDetectionAccuracy", levelPredictionAccuracy);
-				}
-
-
-				saveUpgrades ();
-				return true;
-			} catch {
-				return false;
-			}
-
-		}
-
-		public bool saveUpgrades ()
-		{
-			try{
-				ConfigNode mainNode = currentSave.GetNode ("RoverScience");
-				mainNode.SetValue ("levelMaxDistance", levelMaxDistance.ToString());
-				mainNode.SetValue ("levelDetectionAccuracy", levelPredictionAccuracy.ToString());
-				currentSave.Save (fileName);
-				return true;
-			} catch {
-				return false;
-			}
-		}
-
-
+        
         public string getUpgradeName(RSUpgrade upgrade)
         {
             switch (upgrade)
@@ -556,7 +492,7 @@ namespace RoverScience
 
 				// DEBUG WINDOW
 				if (Input.GetKey (KeyCode.RightControl) && Input.GetKey (KeyCode.Keypad5)) {
-					roverScienceGUI.debugGUI.show ();
+					roverScienceGUI.debugGUI.toggle ();
 				}
 			}
 		}

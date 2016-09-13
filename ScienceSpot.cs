@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using KSP;
+using KSP.UI.Screens;
 
 namespace RoverScience
 {
@@ -22,8 +24,13 @@ namespace RoverScience
         public string predictedSpot = "";
         private string[] potentialStrings = new string[] { "Very High!", "High", "Normal", "Low", "Very Low!" };
 
-		public bool established = false;
+
+
+        public bool established = false;
 		RoverScience roverScience = null;
+
+        public int minDistance = 5;
+        public int minDistanceDefault = 5;
 
 		public ScienceSpot (RoverScience roverScience)
 		{
@@ -84,9 +91,26 @@ namespace RoverScience
             return "Potential string unresolved";
         }
 
-		public void generateScience()
+		public void generateScience(bool anomaly = false)
 		{
 			Debug.Log ("generateScience()");
+
+            // anomaly flag will set a high science value
+            if (anomaly)
+            {
+                potentialGenerated = "anomaly"; // (doesn't really matter what we write here, as it's superceded by predictScience()
+
+                if (rand.Next(0, 100) < 1)
+                {
+                    potentialScience = 500;
+                    return;
+                } else
+                {
+                    potentialScience = 300;
+                    return;
+                }
+            }
+
 			if (rand.Next (0, 100) < 1) {
                 potentialGenerated = getPotentialString (potentials.vhigh);
 				potentialScience = rand.Next (400, 500);
@@ -113,6 +137,7 @@ namespace RoverScience
 
             potentialGenerated = getPotentialString(potentials.vlow);
 			potentialScience = rand.Next (0, 30);
+            
 
 		}
 
@@ -121,8 +146,13 @@ namespace RoverScience
 		public void checkAndSet()
         {
             // Once distance traveled passes the random check distance
+            if ((rover.distanceToClosestAnomaly <= 100) && (!Anomalies.Instance.hasCurrentAnomalyBeenAnalyzed()))
+            {
+                setLocation(rover.closestAnomaly.location.longitude, rover.closestAnomaly.location.latitude, anomaly: true);
+                rover.resetDistanceTraveled();
 
-            if (rover.distanceTraveled >= rover.distanceCheck)
+
+            } else if (rover.distanceTraveled >= rover.distanceCheck)
             {
 				
                 rover.resetDistanceTraveled();
@@ -156,7 +186,7 @@ namespace RoverScience
                 if ((double)rNum <= chance)
                 {
 						
-                    setLocation(rover.minRadius, rover.maxRadius);
+                    setLocation(random: true);
 					Debug.Log ("setLocation");
 
                     roverScienceGUI.clearConsole();
@@ -177,10 +207,10 @@ namespace RoverScience
 
         }
 
-        // Method to set location
-        public void setLocation(int minRadius, int maxRadius)
+        public COORDS generateRandomLocation(int minRadius, int maxRadius)
         {
-            // generate random radius for where to spot placement
+            COORDS randomSpot = new COORDS();
+
             randomRadius = rand.Next(minRadius, maxRadius);
             roverScience.setScienceMaxRadiusBoost(randomRadius);
 
@@ -198,42 +228,65 @@ namespace RoverScience
             double spotLon = currentLongitude + Math.Atan2(Math.Sin(randomTheta) * Math.Sin(angularDistance) * Math.Cos(currentLatitude),
                 Math.Cos(angularDistance) - Math.Sin(currentLatitude) * Math.Sin(spotLat));
 
-            location.latitude = spotLat.ToDegrees();
-            location.longitude = spotLon.ToDegrees();
+            randomSpot.latitude = spotLat.ToDegrees();
+            randomSpot.longitude = spotLon.ToDegrees();
+            
+            return randomSpot;
+        }
+
+        // Method to set location
+        public void setLocation(double longitude = 0, double latitude = 0, bool random = false, bool anomaly = false)
+        {
+            // generate random radius for where to spot placement
+            // bool random will override whatever is entered
+
+            if (!random)
+            {
+                location.latitude = latitude;
+                location.longitude = longitude;
+            } else
+            {
+                COORDS randomSpot = generateRandomLocation(rover.minRadius, rover.maxRadius);
+                location.latitude = randomSpot.latitude;
+                location.longitude = randomSpot.longitude;
+            }
 
             established = true;
 
-			this.generateScience();
-            predictSpot();
+			this.generateScience(anomaly);
+            predictSpot(anomaly);
+
             rover.distanceTraveledTotal = 0;
 
-            Debug.Log("== setLocation() ==");
-            Debug.Log("randomAngle: " + Math.Round(randomAngle, 4));
-            Debug.Log("randomTheta (radians): " + Math.Round(randomTheta, 4));
-            Debug.Log("randomTheta (degrees?): " + Math.Round((randomTheta.ToDegrees()), 4));
-            Debug.Log(" ");
-            Debug.Log("randomRadius selected: " + randomRadius);
-            Debug.Log("distance to ScienceSpot: " + rover.distanceFromScienceSpot);
+            //Debug.Log("== setLocation() ==");
+            //Debug.Log("randomAngle: " + Math.Round(randomAngle, 4));
+            //Debug.Log("randomTheta (radians): " + Math.Round(randomTheta, 4));
+            //Debug.Log("randomTheta (degrees?): " + Math.Round((randomTheta.ToDegrees()), 4));
+            //Debug.Log(" ");
+            //Debug.Log("randomRadius selected: " + randomRadius);
+            //Debug.Log("distance to ScienceSpot: " + rover.distanceFromScienceSpot);
 
-            Debug.Log("lat/long: " + location.latitude + " " + location.longitude);
-            Debug.Log("==================");
+            //Debug.Log("lat/long: " + location.latitude + " " + location.longitude);
+            //Debug.Log("==================");
 
-            //DrawWaypoint.Instance.setMarkerLocation(location.longitude, location.latitude, vessel.altitude);
-            DrawWaypoint.Instance.setMarkerLocation(location.longitude, location.latitude);
+            DrawWaypoint.Instance.setMarkerLocation(location.longitude, location.latitude, spawningObject: !anomaly);
             DrawWaypoint.Instance.showMarker();
         }
 
-        
 
-        public void predictSpot()
+
+        public void predictSpot(bool anomaly = false)
         {
             double predictionAccuracyChance = roverScience.currentPredictionAccuracy;
 
             int rNum = rand.Next(0, 100);
 
-            if (rNum < predictionAccuracyChance)
+            if (anomaly)
             {
-                predictedSpot = potentialGenerated;
+                predictedSpot = "Anomaly detected! There is something very interesting nearby...";
+            } else if (rNum < predictionAccuracyChance)
+            {
+                predictedSpot = potentialGenerated; // (full confidence)
             }
             else
             {
@@ -241,6 +294,8 @@ namespace RoverScience
                 // This is to possibly mislead the player
                 predictedSpot = potentialStrings[rand.Next(0, potentialStrings.Length)];
             }
+
+
             Debug.Log("Spot prediction attempted!");
         }
 
@@ -255,7 +310,9 @@ namespace RoverScience
 			rover.distanceTraveledTotal = 0;
 
             DrawWaypoint.Instance.hideMarker();
-		}
+            DrawWaypoint.Instance.DestroyInterestingObject();
+            
+        }
 	}
 
 	

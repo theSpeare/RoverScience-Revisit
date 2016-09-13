@@ -43,6 +43,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Anomalies.cs" />
     <Compile Include="DrawWaypoint.cs" />
     <Compile Include="LandingSpot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -53,14 +54,13 @@
     <Compile Include="GUIClasses.cs" />
     <Compile Include="RandomConsolePrints.cs" />
     <Compile Include="ConsoleGUI.cs" />
+    <Compile Include="RoverScienceScenario.cs" />
     <Compile Include="ScienceSpot.cs" />
     <Compile Include="DebugGUI.cs" />
     <Compile Include="RSUpgrade.cs" />
+    <Compile Include="DebugSkipMenu.cs" />
     <Compile Include="UpgradeGUI.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
-  <ItemGroup>
-    <None Include="Extension Crap\SkipThroughMainMenu.cs" />
-  </ItemGroup>
 </Project>
