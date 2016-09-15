@@ -31,7 +31,7 @@ RoverScience is a KSP plugin that attempts to add more interactive functionality
 ![image](http://i.imgur.com/37ssbHz.png)
 
 ============
-##**RoverScience System**:
+##**RoverScience Upgrades**
 ### Prediction Accuracy
 **Science spots** have a "science potential" containing of "very low" or up to "very high" science. **The player must drive to the science spot physically to receive the full, accurate science potential reading.**
 
