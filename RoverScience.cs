@@ -15,7 +15,7 @@ namespace RoverScience
 	public class RoverScience : PartModule
 	{
 		// Not necessarily updated per build. Mostly updated per major commits
-		public readonly string RSVersion = "2.02";
+		public readonly string RSVersion = "2.1.1";
 		public static RoverScience Instance = null;
 		public System.Random rand = new System.Random ();
 		public ModuleScienceContainer container;
@@ -24,10 +24,12 @@ namespace RoverScience
 
 		public int levelMaxDistance = 1;
 		public int levelPredictionAccuracy = 1;
+        public int levelAnalyzedDecay = 2;
         public readonly int maximum_levelMaxDistance = 5;
         public readonly int maximum_predictionAccuracy = 5;
+        public readonly int maximum_levelAnalyzedDecay = 5;
 
-		public double currentPredictionAccuracy
+        public double currentPredictionAccuracy
         {
             get
             {
@@ -42,6 +44,7 @@ namespace RoverScience
 				return getUpgradeValue(RSUpgrade.maxDistance, levelMaxDistance);
             }
         }
+
        
 		public RoverScienceGUI roverScienceGUI = new RoverScienceGUI();
 		public double distCounter;
@@ -62,6 +65,14 @@ namespace RoverScience
 		}
 
         public float scienceMaxRadiusBoost = 1;
+
+        public double scienceDecayPercentage
+        {
+            get
+            {
+                return Math.Round((1 - scienceDecayScalar) * 100);
+            }
+        }
 
 		public float scienceDecayScalar {
 			get {
@@ -160,7 +171,7 @@ namespace RoverScience
                         rover.setRoverLocation();
                     }
 
-                    if ((!rover.scienceSpot.established) && (!rover.scienceSpotReached))
+                    if ((!rover.scienceSpot.established) && (!rover.scienceSpotReached) && (scienceDecayPercentage < 100))
                     {
                         rover.scienceSpot.checkAndSet();
                     }
@@ -257,16 +268,15 @@ namespace RoverScience
 
 		private float getScienceDecayScalar(int numberOfTimes)
 		{
-			// For the first "three" analysis (0, 1 and then 2) the scalar will remain as 1.
-			if ((numberOfTimes >= 0) && (numberOfTimes <= 2))
-			{
-				return 1;
-			}
-
 			// This is the equation that models the decay of science per analysis made
 			// y = 1.20^(-0.9*(x-2))
 			// Always subject to adjustment
-			double scalar = (1.20 * Math.Exp (-0.9 * (numberOfTimes - 2)));
+			double scalar = (1.20 * Math.Exp (-0.9 * (numberOfTimes - levelAnalyzedDecay)));
+
+            if (scalar > 1)
+            {
+                return 1;
+            }
 
 			return (float)scalar;
 		}
@@ -320,16 +330,18 @@ namespace RoverScience
             switch (upgrade)
             {
                 case (RSUpgrade.maxDistance):
-                    return "Max. Scan Distance";
+                    return "Max Scan Distance";
                 case (RSUpgrade.predictionAccuracy):
                     return "Prediction Accuracy";
+                case (RSUpgrade.analyzedDecay):
+                    return "Analyzed Decay Limit";
                 default:
                     return "Failed to resolve getUpgradeName";
             }
 
         }
 
-		public float getUpgradeCost(RSUpgrade upgrade, int level)
+        public float getUpgradeCost(RSUpgrade upgrade, int level)
 		{
 
             if (level == 0) level = 1;
@@ -354,12 +366,61 @@ namespace RoverScience
 				if (level == 5) return 2100;
 
 				return -1;
-			default:
-				return -1;
+            case (RSUpgrade.analyzedDecay):
+
+                if (level == 1) return 100;
+                if (level == 2) return 100;
+                if (level == 3) return 1000;
+                if (level == 4) return 1500;
+                if (level == 5) return 2000;
+
+                return -1;
+            default:
+			return -1;
 			}
 		}
 
-		public double getUpgradeValue(RSUpgrade upgrade, int level)
+        public string getUpgradeValueString(RSUpgrade upgrade, int level)
+        {
+            // This will come with unit for display
+            switch (upgrade)
+            {
+                case (RSUpgrade.maxDistance):
+                    if (levelMaxDistance >= maximum_levelMaxDistance)
+                    {
+                        return "MAX";
+                    }
+                    else
+                    {
+                        return (getUpgradeValue(RSUpgrade.maxDistance, level) + "m");
+                    }
+
+                case (RSUpgrade.predictionAccuracy):
+                    if (levelPredictionAccuracy >= maximum_predictionAccuracy)
+                    {
+                        return "MAX";
+                    }
+                    else
+                    {
+                        return (getUpgradeValue(RSUpgrade.predictionAccuracy, level) + "%");
+                    }
+
+                case (RSUpgrade.analyzedDecay):
+                    if (levelAnalyzedDecay >= maximum_levelAnalyzedDecay)
+                    {
+                        return "MAX";
+                    }
+                    else
+                    {
+                        return (getUpgradeValue(RSUpgrade.analyzedDecay, level) + "n");
+                    }
+
+                default:
+                    return "Unable to resolve getUpgradeValueString()";
+            }
+        }
+
+        public double getUpgradeValue(RSUpgrade upgrade, int level)
 		{
 
 			if (level == 0) level = 1;
@@ -385,8 +446,16 @@ namespace RoverScience
 
 				return -1;
 
-			default:
-				return -1;
+            case (RSUpgrade.analyzedDecay):
+                if (level <= 2) return 2;
+                if (level == 3) return 3;
+                if (level == 4) return 4;
+                if (level == 5) return 5;
+
+                return -1;
+
+            default:
+			return -1;
 			}
 		}
 
@@ -398,6 +467,8 @@ namespace RoverScience
                     return levelMaxDistance;
                 case (RSUpgrade.predictionAccuracy):
                     return levelPredictionAccuracy;
+                case (RSUpgrade.analyzedDecay):
+                    return levelAnalyzedDecay;
                 default:
                     return -1;
             }
@@ -407,10 +478,14 @@ namespace RoverScience
         {
                 if (upgradeType == RSUpgrade.maxDistance) {
                     levelMaxDistance = newValue;
-                }
+                } else
                 if (upgradeType == RSUpgrade.predictionAccuracy) {
                     levelPredictionAccuracy = newValue;
-                }       
+                } else
+                if (upgradeType == RSUpgrade.analyzedDecay)
+                {
+                    levelAnalyzedDecay = newValue;
+                }
         }
 
         public int getUpgradeMaxLevel(RSUpgrade upgradeType)
@@ -421,6 +496,8 @@ namespace RoverScience
                     return maximum_levelMaxDistance;
                 case (RSUpgrade.predictionAccuracy):
                     return maximum_predictionAccuracy;
+                case (RSUpgrade.analyzedDecay):
+                    return maximum_levelAnalyzedDecay;
                 default:
                     return -1;
             }
@@ -458,11 +535,12 @@ namespace RoverScience
 			} else if (upgradeType == RSUpgrade.predictionAccuracy) {
 				levelPredictionAccuracy++;
 				Debug.Log ("Upgraded predictionAccuracy. Now level: " + levelPredictionAccuracy);
-			}
-
-
-
-
+			} else if (upgradeType == RSUpgrade.analyzedDecay)
+            {
+                levelAnalyzedDecay++;
+                Debug.Log("Upgraded levelAnalyzedDecay. Now level: " + levelAnalyzedDecay);
+            }
+            
             ResearchAndDevelopment.Instance.CheatAddScience(-nextCost);
 
             ScreenMessages.PostScreenMessage(("" + upgradeName + " has been upgraded"),
@@ -485,13 +563,13 @@ namespace RoverScience
 
 			if (HighLogic.LoadedSceneIsFlight) {
 				// CONSOLE WINDOW
-				if (Input.GetKeyUp (KeyCode.LeftControl) && Input.GetKeyUp (KeyCode.R) && Input.GetKeyUp (KeyCode.S)) {
+				if (Input.GetKey (KeyCode.LeftControl) && Input.GetKey (KeyCode.R) && Input.GetKeyUp (KeyCode.S)) {
 					roverScienceGUI.consoleGUI.toggle ();
                     DrawWaypoint.Instance.toggleMarker();
 				}
 
 				// DEBUG WINDOW
-				if (Input.GetKey (KeyCode.RightControl) && Input.GetKey (KeyCode.Keypad5)) {
+				if (Input.GetKey (KeyCode.RightControl) && Input.GetKeyUp (KeyCode.Keypad5)) {
 					roverScienceGUI.debugGUI.toggle ();
 				}
 			}

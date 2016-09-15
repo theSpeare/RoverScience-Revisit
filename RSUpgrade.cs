@@ -8,7 +8,7 @@ namespace RoverScience
 {
 	public enum RSUpgrade
 	{
-		maxDistance, predictionAccuracy
-	}
+		maxDistance, predictionAccuracy, analyzedDecay
+    }
 }
 

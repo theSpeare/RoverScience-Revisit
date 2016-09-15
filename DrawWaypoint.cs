@@ -143,17 +143,20 @@ namespace RoverScience
         private void changeSpherewithDistance(Rover rover)
         {
 
-            float distance = (float)rover.distanceFromScienceSpot;
+            float distanceToRover = (float)rover.distanceFromScienceSpot;
 
-
-            if ((distance < markerSizeMax) && ((distance > rover.scienceSpot.minDistance)))
+            // distance to rover 10
+            // min distance 3
+            // +2 = 5
+            // will keep reducing size as long as distance is over 5
+            if ((distanceToRover < markerSizeMax) && ((distanceToRover > (rover.scienceSpot.minDistance+4))))
             {
                 // Reduce sphere size with proximity
-                markerSize = distance;
+                markerSize = distanceToRover;
                 marker.transform.localScale = new Vector3(markerSize, markerSize, markerSize);
 
                 // Reduce alpha with proximity
-                markerAlpha = (float)(distance / markerSizeMax);
+                markerAlpha = (float)(distanceToRover / markerSizeMax);
                 if (markerAlpha >= maxAlpha)
                 {
                     markerAlpha = maxAlpha;
@@ -169,7 +172,7 @@ namespace RoverScience
 
 
 
-            if ((distance <= (rover.scienceSpot.minDistance - 2)) && (distance >= 0))
+            if ((distanceToRover <= (rover.scienceSpot.minDistance)) && (distanceToRover >= 0))
             {
                 marker.GetComponent<MeshRenderer>().material.color = markerColorGreen;
             } else {

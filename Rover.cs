@@ -105,6 +105,14 @@ namespace RoverScience
             }
         }
 
+        public bool anomalyPresent
+        {
+            get
+            {
+                return ((distanceToClosestAnomaly <= 100) && !Anomalies.Instance.hasCurrentAnomalyBeenAnalyzed());
+            }
+        }
+
         public int numberWheelsLanded
 		{
 			get
@@ -269,15 +277,15 @@ namespace RoverScience
                     distanceClosest = getDistanceBetweenTwoPoints(location, closestAnomaly.location);
                     distanceCheck = getDistanceBetweenTwoPoints(location, anomaly.location);
 
-                    Debug.Log("========" + i + "========");
-                    Debug.Log("distanceClosest: " + distanceClosest);
-                    Debug.Log("distanceCheck: " + distanceCheck);
+                    //Debug.Log("========" + i + "========");
+                    //Debug.Log("distanceClosest: " + distanceClosest);
+                    //Debug.Log("distanceCheck: " + distanceCheck);
 
-                    Debug.Log("Current lat/long: " + location.latitude + "/" + location.longitude);
-                    Debug.Log("Closest Anomaly lat/long: " + closestAnomaly.location.latitude + "/" + closestAnomaly.location.longitude);
-                    Debug.Log("Check Anomaly lat/long: " + anomaly.location.latitude + "/" + anomaly.location.longitude);
+                    //Debug.Log("Current lat/long: " + location.latitude + "/" + location.longitude);
+                    //Debug.Log("Closest Anomaly lat/long: " + closestAnomaly.location.latitude + "/" + closestAnomaly.location.longitude);
+                    //Debug.Log("Check Anomaly lat/long: " + anomaly.location.latitude + "/" + anomaly.location.longitude);
 
-                    Debug.Log("==========<END>==========");
+                    //Debug.Log("==========<END>==========");
 
 
                     if (distanceCheck < distanceClosest)

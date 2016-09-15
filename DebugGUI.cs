@@ -21,7 +21,8 @@ namespace RoverScience
 			GUILayout.Label ("distTrav: " + Math.Round(rover.distanceTraveled));
 			GUILayout.Label ("distTravTotal: " + Math.Round(rover.distanceTraveledTotal));
 			GUIBreakline ();
-			GUILayout.Label ("currentScalarDecay: " + roverScience.scienceDecayScalar);
+            GUILayout.Label("levelAnalyzedDecay: " + roverScience.levelAnalyzedDecay);
+            GUILayout.Label ("currentScalarDecay: " + roverScience.scienceDecayScalar);
 			GUILayout.Label ("scienceDistanceScalarBoost: " + roverScience.scienceMaxRadiusBoost);
 
 			GUILayout.Label ("ScienceSpot potential: " + rover.scienceSpot.potentialGenerated);
@@ -30,10 +31,19 @@ namespace RoverScience
 			GUILayout.Label ("with decay: " + rover.scienceSpot.potentialScience * roverScience.scienceDecayScalar);
 			GUILayout.Label ("with distanceScalarBoost & decay & bodyScalar: " + rover.scienceSpot.potentialScience * 
 				roverScience.scienceDecayScalar * roverScience.scienceMaxRadiusBoost * roverScience.bodyScienceScalar);
+
+            GUIBreakline();
+            GUILayout.Label("Distance travelled for spot: " + rover.distanceTraveledTotal);
+            
+            GUIBreakline();
+            GUILayout.Label("consoleGUI height: " + consoleGUI.rect.height);
+
             GUIBreakline();
             GUILayout.Label("Closest Anomaly ID: " + roverScience.rover.closestAnomaly.id);
             GUILayout.Label("Closest Anomaly Name: " + roverScience.rover.closestAnomaly.name);
             GUILayout.Label("Has current anomaly been analyzed? " + "[" + Anomalies.Instance.hasCurrentAnomalyBeenAnalyzed() + "]");
+
+
 
             GUILayout.BeginHorizontal();
             anomalyVisitedAdd = GUILayout.TextField(anomalyVisitedAdd, 3, new GUILayoutOption[] { GUILayout.Width(50) });
@@ -128,7 +138,27 @@ namespace RoverScience
 			}
 			GUILayout.EndHorizontal ();
 
-			if (GUILayout.Button ("+500 Science")) {
+            GUILayout.Label("levelAnalyzedDecay: " + roverScience.levelAnalyzedDecay);
+
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("-"))
+            {
+                if (roverScience.levelAnalyzedDecay > 1)
+                    roverScience.levelAnalyzedDecay--;
+            }
+
+            if (GUILayout.Button("+"))
+            {
+                roverScience.levelAnalyzedDecay++;
+            }
+
+            if (GUILayout.Button("0"))
+            {
+                roverScience.levelAnalyzedDecay = 1;
+            }
+            GUILayout.EndHorizontal();
+
+            if (GUILayout.Button ("+500 Science")) {
                 ResearchAndDevelopment.Instance.CheatAddScience(500);
             }
 
@@ -151,5 +181,12 @@ namespace RoverScience
 			GUILayout.BeginHorizontal ();
 			GUILayout.EndHorizontal ();
 		}
-	}
+
+        private void GUICenter(string s)
+        {
+            GUILayout.BeginHorizontal(); GUILayout.FlexibleSpace();
+            GUILayout.Label(s);
+            GUILayout.FlexibleSpace(); GUILayout.EndHorizontal();
+        }
+    }
 }

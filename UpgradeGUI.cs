@@ -32,10 +32,11 @@ namespace RoverScience
             GUILayout.Label("Science Available: " + currentScience);
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
-
+            
             drawUpgradeType(RSUpgrade.maxDistance);
             drawUpgradeType(RSUpgrade.predictionAccuracy);
-
+            drawUpgradeType(RSUpgrade.analyzedDecay);
+            
             GUILayout.EndVertical();
 			GUI.DragWindow ();
         }
@@ -45,8 +46,12 @@ namespace RoverScience
 
             int currentLevel = roverScience.getUpgradeLevel(upgradeType);
             int nextLevel = currentLevel + 1;
-            double upgradeValueNow = roverScience.getUpgradeValue(upgradeType, currentLevel);
-            double upgradeValueNext = roverScience.getUpgradeValue(upgradeType, (nextLevel));
+            //double upgradeValueNow = roverScience.getUpgradeValue(upgradeType, currentLevel);
+            //double upgradeValueNext = roverScience.getUpgradeValue(upgradeType, (nextLevel));
+
+            string upgradeValueNow = roverScience.getUpgradeValueString(upgradeType, currentLevel);
+            string upgradeValueNext = roverScience.getUpgradeValueString(upgradeType, (nextLevel));
+
             double upgradeCost = roverScience.getUpgradeCost(upgradeType, (nextLevel));
 
             
@@ -56,7 +61,7 @@ namespace RoverScience
             GUILayout.Label(roverScience.getUpgradeName(upgradeType));
             GUILayout.Space(5);
             GUILayout.Button("Current: " + upgradeValueNow + " [" + currentLevel + "]");
-            GUILayout.Button("Next: " + (upgradeValueNext == -1 ? "MAX" : upgradeValueNext.ToString()));
+            GUILayout.Button("Next: " + (upgradeValueNext == "-1" ? "MAX" : upgradeValueNext.ToString()));
             GUILayout.Button("Cost: " + (upgradeCost == -1 ? "MAX" : upgradeCost.ToString()));
             
             if (GUILayout.Button("UP"))

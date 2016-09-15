@@ -47,16 +47,26 @@ namespace RoverScience
 			}
 		}
 
-		public RoverScienceGUI()
+        //
+
+        
+
+        public RoverScienceGUI()
 		{
-			Debug.Log ("RoverScienceGUI started");
+            Debug.Log ("RoverScienceGUI started");
 			consoleGUI.rect.width = 250;
 			debugGUI.rect.width = 230;
-            upgradeGUI.rect.width = 400;
-		}
-			
+            upgradeGUI.rect.width = 500;
 
-		public void drawGUI()
+            // center consoleGUI
+            consoleGUI.rect.x = (Screen.width / 2) - (consoleGUI.rect.width / 2);
+            consoleGUI.rect.y = (Screen.height / 2) - (250);
+
+            upgradeGUI.rect.x = consoleGUI.rect.x + consoleGUI.rect.width + 50;
+            upgradeGUI.rect.y = consoleGUI.rect.y;
+        }
+
+        public void drawGUI()
 		{
             if (consoleGUI.isOpen)
             {
@@ -68,7 +78,7 @@ namespace RoverScience
                 }
 
             }
-
+            
 			if (debugGUI.isOpen) {
 			    debugGUI.rect = GUILayout.Window (9358921, debugGUI.rect, drawDebugGUI, "Debug");
 			}
@@ -79,7 +89,7 @@ namespace RoverScience
 			if (consolePrintOut.Count >= 50) {
 				consolePrintOut.Clear ();
 			}
-			consolePrintOut.Add (line);
+			consolePrintOut.Add ("> " + line);
 			scrollPosition.y = 10000;
 		}
 
