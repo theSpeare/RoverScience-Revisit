@@ -1,72 +1,61 @@
 RoverScience REVISITED
 ============
-****ALPHA VERSION****
+**UPDATED RELEASE 2.1.1**
 
-Hi! I'm sort of back to do some compatibility fixes on this plugin, and to revisit some of the features as well as add a few more. Please be aware that the coming versions are not hard-tested due to my lack of time, but I /will/ be working on it as often as I can.
+RoverScience is a KSP plugin that attempts to add more interactive functionality to the science system FOR rovers. You drive rovers to search for *science spots* which you may then decide to investigate and analyze for science gain.
 
+============
+##**Quick Instructions**
 
+[1] Build your rover and attach the Rover Brain and ensure it is pointing "forward". As long as it is pointing "forward" it can be placed anywhere on your rover.
+![image](http://i.imgur.com/S9eHqY7.png)
+============
+[2] Right-click on the Rover Brain in-flight and click "Activate Rover Terminal".
 
+![image](http://i.imgur.com/QwXRn4f.png)
+============
+[3] This console will update you with information regarding the Rover Brain. Drive and explore around to search for a science spot.
 
+![image](http://i.imgur.com/ew7AaB6.png)
+============
+[4] After driving for awhile, you may detect a potential science spot. This will be shown as a large red transparent sphere waypoint. Drive towards the waypoint to further investigate.
 
+![image](http://i.imgur.com/k0zGRG4.png)
+============
+[5] Drive into the marker and it will turn green. You may now analyze for science, but before you do consider the potential science. **Every science spot analysis will increase future science loss; be wise with which spots you wish to analyze, and which to abandon.** At any point you may click on "Reset Science Spot" to begin search for another spot.
 
+![image](http://i.imgur.com/GOnFkOT.png)
+============
+[6] This is the upgrade menu. "Current" shows you what value an upgrade currently has. "Next" will show you the value if you increase the level. "Cost" is how much you will spend in science to upgrade. "UP" is the button to upgrade. An explanation of each of the upgrades is given further below.
 
+![image](http://i.imgur.com/37ssbHz.png)
 
-**UPDATED RELEASE 1.0**
+============
+##**RoverScience Upgrades**
+### Prediction Accuracy
+**Science spots** have a "science potential" containing of "very low" or up to "very high" science. **The player must drive to the science spot physically to receive the full, accurate science potential reading.**
 
-RoverScience is a KSP plugin that attempts to add more interactive functionality to the science system FOR rovers. The rover can be either manned, or unmanned (the former will be revised eventually).
+However RoverScience can provide a prediction on the **science spot**'s potential while still away. The accuracy/confidence of the prediction is based on the upgrade "Prediction Accuracy". The player should increase the accuracy level in order to fully trust the prediction reading, as the prediction could be completely wrong.
 
-Firstly, RoverScience will not function unless the Rover Terminal is opened. This is done through the right-click menu of the Rover Brain part.
+This is important to save player time from driving to **science spots** that do not have a decent enough potential.
 
-To do science with a rover, you must have a vessel with at least one wheel in contact with the ground. Wherever you land first with your wheels will establish a **landing spot**. Science is analyzed from **science spots**. To find a science spot you simply have to drive around; however, the farther you are from the landing spot the higher the chance of finding a **science spot**. Once a science spot has been found, the terminal will show the distance and bearing to the spot; heading and rel. heading will be shown as well. Simply drive to the spot (within 3m) and information will be shown about the spot.
+### Max Scan Distance
+**Science spots** farther away from the rover will carry a bonus multiplier. Generally speaking, the farther away you detect science spots, the more science you will get in return. **However this is not always the best case scenario**. 200% of 10 science is **20**. This is where prediction accuracy will come in handy; with good predictions, the player may choose to avoid driving to spots far away in order to save time.
 
-**Each analysis you commit to will slowly degrade a rover's return of science. For the first 3 analyses you'll get normal values, and anything past that will slowly degrade the amount of science you get back. Soak up those high potentials as much as possible!**
+The player can set the scan range on the rover terminal as seen below. Simply input the range in distance and click the button.
 
-Spots are given a random "potential science" where there is a:
-
-- 2% chance of generating a base value of (400-500) science.
-- 8% chance (200-400)
-- 65% chance (70-200)
-- 70% chance (30-70)
-- else: (0 - 30)
-
-Your rover will give out predictions on what the science spot potential may be - however this is subject to a chance accuracy, where the it basically rolls a chance percentage and, if successful, shows you the correct prediction. Otherwise it'll simply show you any other potential as a random mislead. It becomes somewhat important to improve the accuracy, which can be done through upgrades in the upgrade menu.
-
-Science is rolled from top to bottom so there is always a chance to generate the higher science values (albeit very low). A scalar modifier is applied for whichever body you are on. Furthermore the maximum science extractable from a body also differs from body to body. Logically, Kerbin's values should be very low.
-
-The farther your science spot spawns, the more science it'll have (increased by a factor determined by its distance). If the spot is a low potential, and very far, it will still gain a distance boost, but obviously +50% of 10 science will only be 15, so be wary of driving out far for horrible spots.
-
-You can specify what distance maximum you'd like to scan for science spots on the console. You'll be restricted by a locked maximum distance which you can only increase through the upgrade menu.
-
-Biomes are not yet implemented yet (I believe so, but only because it hasn't been tested yet).
-
-
-## NOTES
-#### HEADING
-Heading is calculated from wherever the ship reference is pointing forward. Which means if you use a pod or most of the probe cores they will point straight up to the sky - **the displayed heading will WILDLY fluctuate in this case**. There are then TWO solutions: you can either use the stock chair part, or position Rover Brain like in the screenshot below. Rover Brain has CommandModule attached to it, which means you can use its "control from here" right-click button to reorient the ship's attitude to a horizontal reference.
-
-Make sure the pointy bit POINTS FORWARD! **As long as it points forward, you can place it anywhere on your rover.**
-![image](http://i.imgur.com/Jr0Unyb.png)
-![image](http://i.imgur.com/dPSQmY7.png)
+![image](http://i.imgur.com/GyvJnUK.png)
 
 
+### Analyzed Decay Limit
+**Every science spot analysis will increase future science loss; be wise with which spots you wish to analyze, and which to abandon.**
+Initially, rovers are only able to analyze **two** science spots before beginning to suffer science loss. The player may improve re-usability by upgrading this in the upgrade menu. This mod encourages players to build, and send out more rovers, and so the science costs for this upgrade (as of the time of this writing) will probably be ridiculous.
 
-#### TURN ON THE TERMINAL
-RoverScience is designed not to function unless the rover terminal is up. You can't really do anything without the terminal up, and it seemed more robust to just tie the terminal to RoverScience activity than to add a separate activate/shutdown button.
-
-![image](http://i.imgur.com/tup2z9z.png)
-
-
-
-#### CAREFUL WHEN ANALYZING!
-When over a science spot you are shown the science potential of the spot, not the actual science value. This is to add a decision-making aspect to choosing whether or not to analyze a spot, as you can either get a great value or a low value, but it's up to you to make the decision to take the chance.
-
-**Each analysis you commit to will slowly degrade a rover's return of science. For the first 3 analyses you'll get normal values, and anything past that will slowly degrade the amount of science you get back. Soak up those high potentials as much as possible!**
-
-ALSO be CAREFUL - take care not to accidentally "delete" the actual science data itself, as it will not refund you your analysis count.
-
-
-#### THE MENUS
-![image](http://i.imgur.com/NfbzPL1.png)
-
-Everything is pretty straight forward.
-CTRL + R + S will open the RoverScience menu.
+============
+##**Notes**:
+- Firstly, RoverScience will not function unless the Rover Terminal is opened. This is done through the right-click menu of the Rover Brain part.
+- RoverScience will only search for science spots if your vessel has at least one wheel, and that it is in contact with the ground.
+- Upon landing, your rover will establish a **landing spot**. Driving farther away from where you originally landed will increase chances of finding a **science spot**.
+- **Science spots** detected far away from the rover will have a bonus multiplier added to them. You are rewarded for exploring and reaching far destinations. Bear in mind that a 50% increase to 10 is only 15 -> carefully consider whether the potential (or the prediction) is worth it.
+- Each analysis you commit to will slowly degrade a rover's return of science. For the first 2 analyses you'll get normal values, and anything past that will slowly degrade the amount of science you get back. Soak up those high potentials as much as possible!
+- CTRL + R + S will open the RoverScience menu.
