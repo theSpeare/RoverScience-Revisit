@@ -5,7 +5,7 @@ RoverScience REVISITED
 RoverScience is a KSP plugin that attempts to add more interactive functionality to the science system FOR rovers. You drive rovers to search for *science spots* which you may then decide to investigate and analyze for science gain.
 
 ============
-##**[Quick Instructions]**
+##**Quick Instructions**
 
 [1] Build your rover and attach the Rover Brain and ensure it is pointing "forward". As long as it is pointing "forward" it can be placed anywhere on your rover.
 ![image](http://i.imgur.com/S9eHqY7.png)
@@ -46,7 +46,7 @@ The player can set the scan range on the rover terminal as seen below. Simply in
 ![image](http://i.imgur.com/GyvJnUK.png)
 
 
-## Analyzed Decay Limit
+### Analyzed Decay Limit
 **Every science spot analysis will increase future science loss; be wise with which spots you wish to analyze, and which to abandon.**
 Initially, rovers are only able to analyze **two** science spots before beginning to suffer science loss. The player may improve re-usability by upgrading this in the upgrade menu. This mod encourages players to build, and send out more rovers, and so the science costs for this upgrade (as of the time of this writing) will probably be ridiculous.
 
