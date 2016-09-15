@@ -43,6 +43,7 @@ This is important to save player time from driving to **science spots** that do 
 **Science spots** farther away from the rover will carry a bonus multiplier. Generally speaking, the farther away you detect science spots, the more science you will get in return. **However this is not always the best case scenario**. 200% of 10 science is **20**. This is where prediction accuracy will come in handy; with good predictions, the player may choose to avoid driving to spots far away in order to save time.
 
 The player can set the scan range on the rover terminal as seen below. Simply input the range in distance and click the button.
+
 ![image](http://i.imgur.com/GyvJnUK.png)
 
 
