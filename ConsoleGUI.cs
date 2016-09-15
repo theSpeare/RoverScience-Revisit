@@ -31,6 +31,17 @@ namespace RoverScience
 
         private void drawRoverConsoleGUI(int windowID)
         {
+            if (rover.scienceSpot.established && rover.scienceSpotReached)
+            {
+                consoleGUI.rect.height = 559;
+            } else if (rover.scienceSpot.established)
+            {
+                consoleGUI.rect.height = 495;
+            } else if (!rover.scienceSpot.established)
+            {
+                consoleGUI.rect.height = 466;
+            }
+
 
             redFont.normal.textColor = Color.red;
             greenFont.normal.textColor = Color.green;
@@ -81,7 +92,6 @@ namespace RoverScience
                     {
                         GUILayout.Label("> You have analyzed too many times.\n> Science loss is now at 100%.\n> Send another rover.", redFont);
                     } else {
-                        consoleGUI.rect.height = 466; // SET WINDOW SIZE FOR THIS SPECIFIC BUTTON LAYOUT
                         GUILayout.Label("> Drive around to search for science spots . . .");
                         GUILayout.Label("> Currently scanning at range: " + rover.maxRadius + "m");
                         //GUILayout.Label("> Total dist. traveled searching: " + Math.Round(rover.distanceTraveledTotal, 2));
@@ -164,9 +174,9 @@ namespace RoverScience
             // ACTIVATE ROVER BUTTON
             if (rover.scienceSpotReached)
             {
+               
                 if (!analyzeButtonPressedOnce)
                 {
-                    consoleGUI.rect.height = 559; // SET WINDOW SIZE FOR THIS SPECIFIC BUTTON LAYOUT
                     if (GUILayout.Button("Analyze Science", GUILayout.Height(60)))
                     {
                         if (roverScience.container.GetStoredDataCount() == 0)
@@ -206,7 +216,6 @@ namespace RoverScience
 
             if (rover.scienceSpot.established)
             {
-                consoleGUI.rect.height = 495; // SET WINDOW SIZE FOR THIS SPECIFIC BUTTON LAYOUT
                 if (GUILayout.Button("Reset Science Spot"))
                 {
                     rover.scienceSpot.established = false;
@@ -269,8 +278,6 @@ namespace RoverScience
 				consoleGUI.hide ();
 				upgradeGUI.hide ();
 			}
-
-
 			GUI.DragWindow ();
 		}
 
