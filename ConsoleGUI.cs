@@ -14,20 +14,65 @@ namespace RoverScience
 		private string inputMaxDistance = "100";
 
         GUIStyle boldFont = new GUIStyle();
-        GUIStyle percentageColor = new GUIStyle();
-        GUIStyle redFont = new GUIStyle();
-        GUIStyle greenFont = new GUIStyle();
-        GUIStyle yellowFont = new GUIStyle();
+        GUIStyle noWrapFont = new GUIStyle();
 
 
-        private GUIStyle decayFontColor(GUIStyle style, double percentage)
+        
+        private string setRichColor(string s, string color)
         {
-            if (percentage > 70) style.normal.textColor = Color.red;
-            else if (percentage > 50) style.normal.textColor = Color.yellow;
-            else if (percentage > 30) style.normal.textColor = Color.green;
-            
-            return style;
+            // color to be inputted as "#xxxxxx";
+            if (color == "green")
+            {
+                color = "#00ff00ff";
+            }
+            else if (color == "red")
+            {
+                color = "#ff0000ff";
+            } else if (color == "blue")
+            {
+                color = "#add8e6ff";
+            } else if (color == "yellow")
+            {
+                color = "#ffff00ff";
+            } else if (color == "orange")
+            {
+                color = "#ffa500ff";
+            }
+
+            return ("<color=" + color + ">" + s + "</color>");
         }
+
+        private string potentialFontColor(string name)
+        {
+            if (name == "Very High!" || name == "High")
+            {
+                return setRichColor(name, "green");
+            } else if (name == "Normal")
+            {
+                return setRichColor(name, "blue");
+            } else if (name == "Low")
+            {
+                return setRichColor(name, "yellow");
+            } else
+            {
+                return setRichColor(name, "red");
+            }
+        }
+
+        private string predictionFontColor(double percentage)
+        {
+            if (percentage > 70) return setRichColor(percentage.ToString() + "%", "green");
+            else if (percentage >= 50) return setRichColor(percentage.ToString() + "%", "yellow");
+            else return setRichColor(percentage.ToString() + "%", "red");
+        }
+
+        private string decayFontColor (double percentage)
+        {
+            if (percentage > 70) return setRichColor(percentage.ToString() + "%", "red");
+            else if (percentage >= 50) return setRichColor(percentage.ToString() + "%", "yellow");
+            else return setRichColor(percentage.ToString() + "%", "green");
+        }
+
 
         private void drawRoverConsoleGUI(int windowID)
         {
@@ -43,19 +88,13 @@ namespace RoverScience
             }
 
 
-            redFont.normal.textColor = Color.red;
-            greenFont.normal.textColor = Color.green;
-            yellowFont.normal.textColor = Color.yellow;
-            //green_label = new GUIStyle(GUI.skin.label);
-            // green_label.normal.textColor = Color.green;
-            //red_label = new GUIStyle(GUI.skin.label);
-            //red_label.normal.textColor = Color.red;
-
             boldFont = new GUIStyle(GUI.skin.label);
-            percentageColor = new GUIStyle(GUI.skin.label);
+            noWrapFont = new GUIStyle(GUI.skin.label);
 
             boldFont.fontStyle = FontStyle.Bold;
             boldFont.wordWrap = false;
+
+            noWrapFont.wordWrap = false;
 
             GUILayout.BeginVertical(GUIStyles.consoleArea);
             scrollPosition = GUILayout.BeginScrollView(scrollPosition, new GUILayoutOption[] { GUILayout.Width(240), GUILayout.Height(340) });
@@ -68,8 +107,7 @@ namespace RoverScience
             GUILayout.FlexibleSpace(); GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal(); GUILayout.FlexibleSpace();
-            GUILayout.Label("Science Loss due to re-use: ", boldFont);
-            GUILayout.Label(roverScience.scienceDecayPercentage.ToString() + "%", decayFontColor(percentageColor, roverScience.scienceDecayPercentage));
+            GUILayout.Label("Science Loss due to re-use: " + decayFontColor(roverScience.scienceDecayPercentage), boldFont);
             GUILayout.FlexibleSpace(); GUILayout.EndHorizontal();
 
             GUICenter("_____________________");
@@ -90,7 +128,7 @@ namespace RoverScience
 
                     if (roverScience.scienceDecayPercentage >= 100)
                     {
-                        GUILayout.Label("> You have analyzed too many times.\n> Science loss is now at 100%.\n> Send another rover.", redFont);
+                        GUILayout.Label(setRichColor("> You have analyzed too many times.\n> Science loss is now at 100%.\n> Send another rover.", "red"));
                     } else {
                         GUILayout.Label("> Drive around to search for science spots . . .");
                         GUILayout.Label("> Currently scanning at range: " + rover.maxRadius + "m");
@@ -103,7 +141,7 @@ namespace RoverScience
 
                         if (vessel.mainBody.bodyName == "Kerbin")
                         {
-                            GUILayout.Label("> WARNING - there is very little rover science for Kerbin!", redFont);
+                            GUILayout.Label(setRichColor("> WARNING - there is very little rover science for Kerbin!", "red"));
                         }
                     }
 
@@ -116,10 +154,10 @@ namespace RoverScience
                         GUILayout.BeginHorizontal(); GUILayout.FlexibleSpace();
                         if (!rover.anomalyPresent)
                         {
-                            GUILayout.Label("[POTENTIAL SCIENCE SPOT]", yellowFont);
+                            GUILayout.Label(setRichColor("[POTENTIAL SCIENCE SPOT]", "yellow"));
                         } else
                         {
-                            GUILayout.Label("[ANOMALY DETECTED]", yellowFont);
+                            GUILayout.Label(setRichColor("[ANOMALY DETECTED]", "yellow"));
                         }
 
                         GUILayout.FlexibleSpace(); GUILayout.EndHorizontal();
@@ -131,7 +169,9 @@ namespace RoverScience
 
                         if (!rover.anomalyPresent)
                         {
-                            GUILayout.Label("> Science Potential: " + rover.scienceSpot.predictedSpot + " (" + roverScience.currentPredictionAccuracy + "% confident)");
+                            //GUILayout.Label("> Science Potential: " + rover.scienceSpot.predictedSpot + " (" + roverScience.currentPredictionAccuracy + "% confident)");
+                            GUILayout.Label("> Science Prediction: " + potentialFontColor(rover.scienceSpot.predictedSpot));
+                            GUILayout.Label("> Prediction is " + predictionFontColor(roverScience.currentPredictionAccuracy) + " confident");
                         }
                         else
                         {
@@ -152,13 +192,15 @@ namespace RoverScience
                     {
 
                         GUILayout.BeginHorizontal(); GUILayout.FlexibleSpace();
-                        GUILayout.Label("[SCIENCE SPOT REACHED]", greenFont);
+                        GUILayout.Label(setRichColor("[SCIENCE SPOT REACHED]", "green"));
                         GUILayout.FlexibleSpace(); GUILayout.EndHorizontal();
 
                         //GUILayout.Label("Total dist. traveled for this spot: " + Math.Round(rover.distanceTraveledTotal, 1));
                         //GUILayout.Label("Distance from landing site: " +
                         //Math.Round(rover.getDistanceBetweenTwoPoints(rover.scienceSpot.location, rover.landingSpot.location), 1));
-                        GUILayout.Label("> Science Potential: " + rover.scienceSpot.potentialGenerated + " (accurate)");
+                        GUILayout.BeginHorizontal();
+                        GUILayout.Label("> Science Potential: " + potentialFontColor(rover.scienceSpot.potentialGenerated) + " (actual)");
+                        GUILayout.EndHorizontal();
 
                         GUIBreakline();
 
