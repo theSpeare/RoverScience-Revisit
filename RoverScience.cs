@@ -15,7 +15,7 @@ namespace RoverScience
 	public class RoverScience : PartModule
 	{
 		// Not necessarily updated per build. Mostly updated per major commits
-		public readonly string RSVersion = "2.1.1";
+		public readonly string RSVersion = "2.2.0x";
 		public static RoverScience Instance = null;
 		public System.Random rand = new System.Random ();
 		public ModuleScienceContainer container;
@@ -45,8 +45,13 @@ namespace RoverScience
             }
         }
 
-       
-		public RoverScienceGUI roverScienceGUI = new RoverScienceGUI();
+        private RoverScienceDB DB
+        {
+            get { return RoverScienceDB.Instance; }
+        }
+
+
+        public RoverScienceGUI roverScienceGUI = new RoverScienceGUI();
 		public double distCounter;
 		[KSPField (isPersistant = true)]
 		public int amountOfTimesAnalyzed = 0;
@@ -120,28 +125,62 @@ namespace RoverScience
         {
             Instance = this;
 
+            if (rover == null)
+            {
+                Debug.Log("rover was null, creating new rover class (OnLoad)");
+                rover = new Rover();
+            }
+
+            try
+            {
+                DB.updateRoverScience();
+            }catch{}
+
         }
 
-		public override void OnStart (PartModule.StartState state)
+        public override void OnSave(ConfigNode vesselNode)
+        {
+            try
+            {
+                DB.updateDB();
+            } catch
+            {
+
+            }
+        }
+
+
+        public override void OnStart (PartModule.StartState state)
 		{
 			if (HighLogic.LoadedSceneIsFlight) {
 				if (IsPrimary) {
 					Debug.Log ("RoverScience 2 initiated!");
 					Debug.Log ("RoverScience version: " + RSVersion);
 	
-	
 					Instance = this;
+                    
 					Debug.Log ("RS Instance set - " + Instance);
 	
 					container = part.Modules ["ModuleScienceContainer"] as ModuleScienceContainer;
 					command = part.Modules ["ModuleCommand"] as ModuleCommand;
-	
-					// Must be called here otherwise they won't run their constructors for some reason
-					rover = new Rover ();
+
+                    // Must be called here otherwise they won't run their constructors for some reason
+                    if (rover == null)
+                    {
+                        Debug.Log("rover was null, creating new rover class (OnStart)");
+                        rover = new Rover();
+                    }
 					rover.scienceSpot = new ScienceSpot (Instance);
 					rover.landingSpot = new LandingSpot (Instance);
 
+                    try
+                    {
+                        DB.updateRoverScience();
+                    }
+                    catch { }
+
                     rover.setClosestAnomaly(vessel.mainBody.bodyName);
+
 
                 } else {
 					Debug.Log ("ONSTART - Not primary");

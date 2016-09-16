@@ -208,8 +208,9 @@ namespace RoverScience
 
 		private double getRoverHeading()
 		{
-			Vector3d coM = vessel.findLocalCenterOfMass();
-			Vector3d up = (coM - vessel.mainBody.position).normalized;
+            //Vector3d coM = vessel.findLocalCenterOfMass();
+            Vector3d coM = vessel.localCoM;
+            Vector3d up = (coM - vessel.mainBody.position).normalized;
 			Vector3d north = Vector3d.Exclude(up, (vessel.mainBody.position + 
 				(Vector3d)vessel.mainBody.transform.up * vessel.mainBody.Radius) - coM).normalized;
 
