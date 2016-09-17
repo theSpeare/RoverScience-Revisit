@@ -51,11 +51,13 @@ The player can set the scan range on the rover terminal as seen below. Simply in
 **Every science spot analysis will increase future science loss; be wise with which spots you wish to analyze, and which to abandon.**
 Initially, rovers are only able to analyze **two** science spots before beginning to suffer science loss. The player may improve re-usability by upgrading this in the upgrade menu. This mod encourages players to build, and send out more rovers, and so the science costs for this upgrade (as of the time of this writing) will probably be ridiculous.
 
+**All upgrades are permanent and work across all rovers!**
+
 ============
 ##**Notes**:
 - Firstly, RoverScience will not function unless the Rover Terminal is opened. This is done through the right-click menu of the Rover Brain part.
 - RoverScience will only search for science spots if your vessel has at least one wheel, and that it is in contact with the ground.
-- Upon landing, your rover will establish a **landing spot**. Driving farther away from where you originally landed will increase chances of finding a **science spot**.
-- **Science spots** detected far away from the rover will have a bonus multiplier added to them. You are rewarded for exploring and reaching far destinations. Bear in mind that a 50% increase to 10 is only 15 -> carefully consider whether the potential (or the prediction) is worth it.
+- Upon landing, your rover will establish a **landing spot**. Driving farther away from where you originally landed will increase chances of _finding a **science spot**_.
+- **Science spots** detected far away from the _rover_ will have a bonus multiplier added to them. You are rewarded for exploring and reaching far destinations. Bear in mind that a 50% increase to 10 is only 15 -> carefully consider whether the potential (or the prediction) is worth it.
 - Each analysis you commit to will slowly degrade a rover's return of science. For the first 2 analyses you'll get normal values, and anything past that will slowly degrade the amount of science you get back. Soak up those high potentials as much as possible!
 - CTRL + R + S will open the RoverScience menu.
