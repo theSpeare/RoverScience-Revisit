@@ -27,14 +27,18 @@ namespace RoverScience
 
 			public RandomConsolePrintOuts()
 			{
-				strings.Add("Nothing seems to be here");
+                strings.Add("Nothing seems to be here");
 				strings.Add("Running scans, checking");
 				strings.Add("Weak signals of interest");
 				strings.Add("Defragmenting - maybe that will help");
 				strings.Add("Doing science-checks");
 				strings.Add("No science here");
 				strings.Add("Curiousity still increasing");
-			}
+                strings.Add("Rocks, rocks, rocks, where are the interesting rocks?");
+                strings.Add("Daisy . . . *cough* checking for science!");
+                strings.Add("Nothing interesting here yet");
+                strings.Add("Science, science!");
+            }
 
 		}
 

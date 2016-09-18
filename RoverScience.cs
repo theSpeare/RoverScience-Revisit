@@ -307,10 +307,13 @@ namespace RoverScience
 
 		private float getScienceDecayScalar(int numberOfTimes)
 		{
-			// This is the equation that models the decay of science per analysis made
-			// y = 1.20^(-0.9*(x-2))
-			// Always subject to adjustment
-			double scalar = (1.20 * Math.Exp (-0.9 * (numberOfTimes - levelAnalyzedDecay)));
+            // This is the equation that models the decay of science per analysis made
+            // y = 1.20^(-0.9*(x-2))
+            // Always subject to adjustment
+            //double scalar = (1.20 * Math.Exp (-0.9 * (numberOfTimes - levelAnalyzedDecay)));
+
+            double scalar = (1.20 * Math.Exp(-0.4 * (numberOfTimes - levelAnalyzedDecay)));
+            // decay pattern as such:  0.8, 0.54, 0.36, 0.24, 0.16, 0.1
 
             if (scalar > 1)
             {
@@ -407,11 +410,11 @@ namespace RoverScience
 				return -1;
             case (RSUpgrade.analyzedDecay):
 
-                if (level == 1) return 100;
-                if (level == 2) return 100;
+                if (level == 1) return 0;
+                if (level == 2) return 0;
                 if (level == 3) return 1000;
-                if (level == 4) return 1500;
-                if (level == 5) return 2000;
+                if (level == 4) return 1000;
+                if (level == 5) return 1000;
 
                 return -1;
             default:

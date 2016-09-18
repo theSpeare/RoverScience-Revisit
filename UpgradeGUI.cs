@@ -36,7 +36,8 @@ namespace RoverScience
             drawUpgradeType(RSUpgrade.maxDistance);
             drawUpgradeType(RSUpgrade.predictionAccuracy);
             drawUpgradeType(RSUpgrade.analyzedDecay);
-            
+
+            GUILayout.Label("All upgrades are permanent and apply across all rovers");
             GUILayout.EndVertical();
 			GUI.DragWindow ();
         }
