@@ -97,7 +97,14 @@ namespace RoverScience
         public void saveAnomaliesAnalyzed(ConfigNode node)
         {
             Debug.Log("Attempting to save anomalies analyzed");
-            List<string> anomaliesAnalyzed = RoverScience.Instance.rover.anomaliesAnalyzed;
+			
+			try{
+				
+				List<string> anomaliesAnalyzed = RoverScience.Instance.rover.anomaliesAnalyzed;
+			}catch{
+				List<string> anomaliesAnalyzed = new List<string>();
+				Debug.Log("anomaliesAnalyzed came out as NULL in saveAnomaliesAnalyzed");
+			}
 
             if (anomaliesAnalyzed.Any())
             {
