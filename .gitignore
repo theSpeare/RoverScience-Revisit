@@ -11,3 +11,4 @@ GameData/RoverScience/rock/smallrock.tga
 *.tga
 bin/Debug/RoverScience.pdb
 *.dll
+*.xlsx
