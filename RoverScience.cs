@@ -15,7 +15,7 @@ namespace RoverScience
 	public class RoverScience : PartModule
 	{
 		// Not necessarily updated per build. Mostly updated per major commits
-		public readonly string RSVersion = "2.1.1";
+		public readonly string RSVersion = "2.2.0x";
 		public static RoverScience Instance = null;
 		public System.Random rand = new System.Random ();
 		public ModuleScienceContainer container;
@@ -45,8 +45,13 @@ namespace RoverScience
             }
         }
 
-       
-		public RoverScienceGUI roverScienceGUI = new RoverScienceGUI();
+        private RoverScienceDB DB
+        {
+            get { return RoverScienceDB.Instance; }
+        }
+
+
+        public RoverScienceGUI roverScienceGUI = new RoverScienceGUI();
 		public double distCounter;
 		[KSPField (isPersistant = true)]
 		public int amountOfTimesAnalyzed = 0;
@@ -120,28 +125,62 @@ namespace RoverScience
         {
             Instance = this;
 
+            if (rover == null)
+            {
+                Debug.Log("rover was null, creating new rover class (OnLoad)");
+                rover = new Rover();
+            }
+
+            try
+            {
+                DB.updateRoverScience();
+            }catch{}
+
         }
 
-		public override void OnStart (PartModule.StartState state)
+        public override void OnSave(ConfigNode vesselNode)
+        {
+            try
+            {
+                DB.updateDB();
+            } catch
+            {
+
+            }
+        }
+
+
+        public override void OnStart (PartModule.StartState state)
 		{
 			if (HighLogic.LoadedSceneIsFlight) {
 				if (IsPrimary) {
 					Debug.Log ("RoverScience 2 initiated!");
 					Debug.Log ("RoverScience version: " + RSVersion);
 	
-	
 					Instance = this;
+                    
 					Debug.Log ("RS Instance set - " + Instance);
 	
 					container = part.Modules ["ModuleScienceContainer"] as ModuleScienceContainer;
 					command = part.Modules ["ModuleCommand"] as ModuleCommand;
-	
-					// Must be called here otherwise they won't run their constructors for some reason
-					rover = new Rover ();
+
+                    // Must be called here otherwise they won't run their constructors for some reason
+                    if (rover == null)
+                    {
+                        Debug.Log("rover was null, creating new rover class (OnStart)");
+                        rover = new Rover();
+                    }
 					rover.scienceSpot = new ScienceSpot (Instance);
 					rover.landingSpot = new LandingSpot (Instance);
 
+                    try
+                    {
+                        DB.updateRoverScience();
+                    }
+                    catch { }
+
                     rover.setClosestAnomaly(vessel.mainBody.bodyName);
+
 
                 } else {
 					Debug.Log ("ONSTART - Not primary");
@@ -268,10 +307,13 @@ namespace RoverScience
 
 		private float getScienceDecayScalar(int numberOfTimes)
 		{
-			// This is the equation that models the decay of science per analysis made
-			// y = 1.20^(-0.9*(x-2))
-			// Always subject to adjustment
-			double scalar = (1.20 * Math.Exp (-0.9 * (numberOfTimes - levelAnalyzedDecay)));
+            // This is the equation that models the decay of science per analysis made
+            // y = 1.20^(-0.9*(x-2))
+            // Always subject to adjustment
+            //double scalar = (1.20 * Math.Exp (-0.9 * (numberOfTimes - levelAnalyzedDecay)));
+
+            double scalar = (1.20 * Math.Exp(-0.4 * (numberOfTimes - levelAnalyzedDecay)));
+            // decay pattern as such:  0.8, 0.54, 0.36, 0.24, 0.16, 0.1
 
             if (scalar > 1)
             {
@@ -368,11 +410,11 @@ namespace RoverScience
 				return -1;
             case (RSUpgrade.analyzedDecay):
 
-                if (level == 1) return 100;
-                if (level == 2) return 100;
+                if (level == 1) return 0;
+                if (level == 2) return 0;
                 if (level == 3) return 1000;
-                if (level == 4) return 1500;
-                if (level == 5) return 2000;
+                if (level == 4) return 1000;
+                if (level == 5) return 1000;
 
                 return -1;
             default:

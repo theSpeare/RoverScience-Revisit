@@ -4,7 +4,6 @@ bin/Debug/RoverScience.dll
 *.pdb
 bin/Debug/RoverScience.dll
 *.dll
-*.dll
 *.png
 *.mu
 GameData/RoverScience/rock/smallrock.tga

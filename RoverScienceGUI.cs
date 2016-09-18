@@ -46,9 +46,6 @@ namespace RoverScience
 				return RoverScience.Instance.rover;
 			}
 		}
-
-        //
-
         
 
         public RoverScienceGUI()
@@ -83,6 +80,12 @@ namespace RoverScience
 			    debugGUI.rect = GUILayout.Window (9358921, debugGUI.rect, drawDebugGUI, "Debug");
 			}
 		}
+
+        public void setWindowPos (GUIClass guiWindow, float x, float y)
+        {
+            guiWindow.rect.x = x;
+            guiWindow.rect.y = y;
+        }
 
 		public void addToConsole (string line)
 		{
