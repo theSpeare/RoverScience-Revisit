@@ -15,7 +15,7 @@ namespace RoverScience
 	public class RoverScience : PartModule
 	{
 		// Not necessarily updated per build. Mostly updated per major commits
-		public readonly string RSVersion = "2.2.0x";
+		public readonly string RSVersion = "2.1.3";
 		public static RoverScience Instance = null;
 		public System.Random rand = new System.Random ();
 		public ModuleScienceContainer container;
@@ -123,6 +123,7 @@ namespace RoverScience
 
         public override void OnLoad (ConfigNode vesselNode)
         {
+            Debug.Log("#X1 RoverScience OnLoad @" + DateTime.Now);
             Instance = this;
 
             if (rover == null)
@@ -131,22 +132,23 @@ namespace RoverScience
                 rover = new Rover();
             }
 
-            try
-            {
-                DB.updateRoverScience();
-            }catch{}
+           // try
+            //{
+            if (DB != null)  DB.updateRoverScience();
+            //}catch{
+            //}
 
         }
 
         public override void OnSave(ConfigNode vesselNode)
         {
-            try
-            {
-                DB.updateDB();
-            } catch
-            {
-
-            }
+            Debug.Log("RoverScience OnSave @" + DateTime.Now);
+            // try
+            // {
+            if (DB != null) DB.updateDB();
+            //} catch
+            //{
+            //}
         }
 
 
@@ -173,11 +175,11 @@ namespace RoverScience
 					rover.scienceSpot = new ScienceSpot (Instance);
 					rover.landingSpot = new LandingSpot (Instance);
 
-                    try
-                    {
-                        DB.updateRoverScience();
-                    }
-                    catch { }
+                    //try
+                    //{
+                    if (DB != null) DB.updateRoverScience();
+                    //}
+                    //catch { }
 
                     rover.setClosestAnomaly(vessel.mainBody.bodyName);
 
@@ -234,7 +236,8 @@ namespace RoverScience
 
 				// Divide by 20 to convert to data form
 				float sciData = (rover.scienceSpot.potentialScience) / sciSubject.subjectValue;
-				Debug.Log ("sciData (potential/20)" + sciData);
+
+				Debug.Log ("sciData (potential/20): " + sciData);
 
 
                 // Apply multipliers

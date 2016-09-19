@@ -10,6 +10,7 @@ namespace RoverScience
     public class RoverScienceDB : MonoBehaviour
     {
         public static RoverScienceDB Instance;
+
         public RoverScienceDB()
         {
             Instance = this;
@@ -40,45 +41,71 @@ namespace RoverScience
 
         public void updateRoverScience()
         {
-            // load all values above to roverscience stuff.
-            // this should be called from RoverScience class
+            // updateRoverScience grabs values from DB
+
+            //string debugS = "";
+            //debugS += "\nupdateRS ATTEMPT: @" + DateTime.Now;
+            //debugS += "\nupdateRS - roverScience: " + roverScience;
+            //debugS += "\nupdateRS - roverScience.rover: " + roverScience.rover;
+            //Debug.Log(debugS);
+            //debugPrintAll("update[RS] - debugPrintAll");
+
             roverScience.levelMaxDistance = levelMaxDistance;
             roverScience.levelPredictionAccuracy = levelPredictionAccuracy;
             roverScience.levelAnalyzedDecay = levelAnalyzedDecay;
 
-            GUI.setWindowPos(GUI.consoleGUI, (float)Convert.ToDouble(console_x_y_show[0]), (float)Convert.ToDouble(console_x_y_show[1]));
-            GUI.consoleGUI.isOpen = Convert.ToBoolean(console_x_y_show[2]);
+            if (console_x_y_show.Any())
+            {
+                GUI.setWindowPos(GUI.consoleGUI, (float)Convert.ToDouble(console_x_y_show[0]), (float)Convert.ToDouble(console_x_y_show[1]));
+                GUI.consoleGUI.isOpen = Convert.ToBoolean(console_x_y_show[2]);
+            }
+
+            
+
 
             roverScience.rover.anomaliesAnalyzed = anomaliesAnalyzed;
+            Debug.Log("RSR: (RS) Successfully updated RoverScience");
         }
 
         public void updateDB()
         {
+            // updateDB grabs values from RoverScience (updates)
+
+            //string debugS = "";
+            //debugS += "\nupdateDB ATTEMPT: @" + DateTime.Now;
+            //debugS += "\nupdateDB - roverScience: " + roverScience;
+            //debugS += "\nupdateDB - roverScience.rover: " + roverScience.rover;
+            //debugS += "\nupdateDB - GUI:" + GUI;
+            //Debug.Log(debugS);
+
+            debugPrintAll("update[DB] - debugPrintAll");
+
             levelMaxDistance = roverScience.levelMaxDistance;
             levelPredictionAccuracy = roverScience.levelPredictionAccuracy;
             levelAnalyzedDecay = roverScience.levelAnalyzedDecay;
-
-            console_x_y_show[0] = GUI.consoleGUI.rect.x.ToString();
-            console_x_y_show[1] = GUI.consoleGUI.rect.y.ToString();
-            console_x_y_show[2] = GUI.consoleGUI.isOpen.ToString();
+            
+            console_x_y_show = new List<string>();
+            console_x_y_show.Add(GUI.consoleGUI.rect.x.ToString());
+            console_x_y_show.Add(GUI.consoleGUI.rect.y.ToString());
+            console_x_y_show.Add(GUI.consoleGUI.isOpen.ToString());
 
             anomaliesAnalyzed = roverScience.rover.anomaliesAnalyzed;
+            Debug.Log("roverScience.rover.anomaliesAnalyzed: " + roverScience.rover.anomaliesAnalyzed);
+
+            Debug.Log("RSR: (DB) Successfully updated DB");
         }
 
         public void debugPrintAll(string title = "")
         {
-            Debug.Log("======== "+title+" ========");
-            Debug.Log("(From RoverScience DB: debugPrintAll @ " + DateTime.Now);
-            Debug.Log("levelMaxDistance: " + levelMaxDistance);
-            Debug.Log("levelPredictionAccuracy: " + levelPredictionAccuracy);
-            Debug.Log("levelAnalyzedDecay: " + levelAnalyzedDecay);
-
-
-            
-
-            Debug.Log("console_x_y_show: " + string.Join(",", console_x_y_show.ToArray()));
-            Debug.Log("anomaliesAnalyzed: " + string.Join(",", anomaliesAnalyzed.ToArray()));
-            Debug.Log("======================================");
+            string ds = "======== " + title + " ========";
+            ds += "\n(From RoverScience DB: debugPrintAll @ " + DateTime.Now;
+            ds += "\nlevelMaxDistance: " + levelMaxDistance;
+            ds += "\nlevelPredictionAccuracy: " + levelPredictionAccuracy;
+            ds += "\nlevelAnalyzedDecay: " + levelAnalyzedDecay;
+            ds += "\nconsole_x_y_show: " + string.Join(",", console_x_y_show.ToArray());
+            ds += "\nanomaliesAnalyzed: " + string.Join(",", anomaliesAnalyzed.ToArray());
+            ds += "\n======================================";
+            Debug.Log(ds);
         }
     }
 
@@ -114,7 +141,7 @@ namespace RoverScience
 
         public override void OnLoad(ConfigNode node)
         {
-            Debug.Log("Scenario.OnLoad Called @ " + DateTime.Now);
+            Debug.Log("#X1 RoverScienceScenario OnLoad @" + DateTime.Now);
 
             Debug.Log("#### RS: Attempted to LOAD FILE VIA KSPSCENARIO v2");
 
@@ -168,11 +195,19 @@ namespace RoverScience
                 //string consoleDetailString = consoleGUI.rect.x + "," + consoleGUI.rect.y + "," + consoleGUI.isOpen;
                 node.AddValue("console_x_y_show", string.Join(",", DB.console_x_y_show.ToArray()));
             }
+
+            if (RoverScience.Instance.rover != null)
+            {
+                DB.updateRoverScience();
+            }
+
         }
 
         public override void OnSave(ConfigNode node)
         {
-            
+
+            Debug.Log("RoverScienceScenario OnSave @" + DateTime.Now);
+
             saveAnomaliesAnalyzed(node);
 
             node.SetValue("levelMaxDistance", DB.levelMaxDistance.ToString(), true);
@@ -188,15 +223,7 @@ namespace RoverScience
         public void saveAnomaliesAnalyzed(ConfigNode node)
         {
             Debug.Log("Attempting to save anomalies analyzed");
-            List<string> anomaliesAnalyzed = new List<string>();
-            
-            try
-            {
-				anomaliesAnalyzed = RoverScience.Instance.rover.anomaliesAnalyzed;
-			}catch{
-				Debug.Log("anomaliesAnalyzed came out as NULL in saveAnomaliesAnalyzed");
-			}
-            anomaliesAnalyzed = DB.anomaliesAnalyzed;
+            List<string> anomaliesAnalyzed = DB.anomaliesAnalyzed;
 
             if (anomaliesAnalyzed.Any())
             {
