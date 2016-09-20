@@ -206,7 +206,7 @@ namespace RoverScience
             return ((TimeWarp.CurrentRate == 1) && (vessel.horizontalSrfSpeed > (double)0.01) && (numberWheelsLanded > 0));
         }
 
-		private double getRoverHeading()
+        private double getRoverHeading()
 		{
             //Vector3d coM = vessel.findLocalCenterOfMass();
             Vector3d coM = vessel.localCoM;
@@ -219,7 +219,9 @@ namespace RoverScience
 			return rotationVesselSurface.eulerAngles.y;
 		}
 
-		private int getWheelCount()
+
+
+        private int getWheelCount()
 		{
 			int wheelCount = 0;
 

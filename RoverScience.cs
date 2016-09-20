@@ -104,7 +104,7 @@ namespace RoverScience
             DrawWaypoint.Instance.toggleMarker();
         }
 
-		[KSPAction ("Activate Console", actionGroup = KSPActionGroup.None)]
+        [KSPAction ("Activate Console", actionGroup = KSPActionGroup.None)]
 		private void showGUIAction (KSPActionParam param)
 		{
 			if (IsPrimary)
@@ -150,6 +150,9 @@ namespace RoverScience
             //{
             //}
         }
+
+
+
 
 
         public override void OnStart (PartModule.StartState state)
@@ -218,7 +221,6 @@ namespace RoverScience
                     }
 				}
 			}
-
 			keyboardShortcuts ();
 		}
 		// Much credit to a.g. as his source helped to figure out how to utilize the experiment and its data

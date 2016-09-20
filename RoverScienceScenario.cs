@@ -141,9 +141,13 @@ namespace RoverScience
 
         public override void OnLoad(ConfigNode node)
         {
+            if (RoverScience.Instance == null) return; // do not do if RoverScience not do
+
             Debug.Log("#X1 RoverScienceScenario OnLoad @" + DateTime.Now);
 
             Debug.Log("#### RS: Attempted to LOAD FILE VIA KSPSCENARIO v2");
+
+
 
             loadAnomaliesAnalyzed(node); // load anomalies
             
@@ -201,10 +205,12 @@ namespace RoverScience
                 DB.updateRoverScience();
             }
 
+            
         }
 
         public override void OnSave(ConfigNode node)
         {
+            if (RoverScience.Instance == null) return; // do not do if RoverScience not do
 
             Debug.Log("RoverScienceScenario OnSave @" + DateTime.Now);
 

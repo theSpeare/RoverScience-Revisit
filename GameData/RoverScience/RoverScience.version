@@ -1,0 +1,18 @@
+{
+    "NAME":"RoverScience",
+    "URL":"https://raw.githubusercontent.com/theSpeare/RoverScience-Revisit/master/GameData/RoverScience/RoverScience.version",
+    "DOWNLOAD":"https://github.com/theSpeare/RoverScience-Revisit/releases",
+    "VERSION":
+    {
+        "MAJOR":2,
+        "MINOR":1,
+        "PATCH":3,
+        "BUILD":0
+    },
+    "KSP_VERSION":
+    {
+        "MAJOR":1,
+        "MINOR":1,
+        "PATCH":3
+    }
+}
