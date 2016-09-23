@@ -1,13 +1,5 @@
-Releases/RoverScience-2.0.0.zip
-*.zip
-bin/Debug/RoverScience.dll
-*.pdb
-bin/Debug/RoverScience.dll
-*.dll
-*.png
-*.mu
-GameData/RoverScience/rock/smallrock.tga
-*.tga
-bin/Debug/RoverScience.pdb
-*.dll
-*.xlsx
+bin/KSP 1.1.3/
+obj/Debug/
+obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+obj/Debug/RoverScience.dll
+obj/Debug/RoverScience.pdb

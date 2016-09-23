@@ -273,15 +273,16 @@ namespace RoverScience
 				if (sciData > 0.1) {
 					if (StoreScience (container, sciSubject, sciData)) {
 						container.ReviewData ();
-						Debug.Log ("Science retrieved! - " + sciData);
+                        amountOfTimesAnalyzed++;
+                        Debug.Log ("Science retrieved! - " + sciData);
 					} else {
 						Debug.Log ("Failed to add science to container!");
 					}
 				} else {
-					ScreenMessages.PostScreenMessage ("Science value was too low - deleting data!", 5, ScreenMessageStyle.UPPER_CENTER);
+
+                    ScreenMessages.PostScreenMessage ("Science value was too low - deleting data!", 5, ScreenMessageStyle.UPPER_CENTER);
 				}
 
-				amountOfTimesAnalyzed++;
 				rover.scienceSpot.reset ();
 
 			} else {
