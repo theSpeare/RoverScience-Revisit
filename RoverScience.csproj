@@ -69,7 +69,4 @@
     <Compile Include="UpgradeGUI.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <Content Include="LineRendererBackup.txt" />
-  </ItemGroup>
 </Project>

@@ -15,7 +15,7 @@ namespace RoverScience
 	public class RoverScience : PartModule
 	{
 		// Not necessarily updated per build. Mostly updated per major commits
-		public readonly string RSVersion = "2.1.3";
+		public readonly string RSVersion = "2.1.4";
 		public static RoverScience Instance = null;
 		public System.Random rand = new System.Random ();
 		public ModuleScienceContainer container;
