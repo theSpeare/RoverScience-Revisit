@@ -7,7 +7,7 @@ RoverScience is a KSP plugin that attempts to add more interactive functionality
 ============
 ##**Quick Instructions**
 
-[1] Build your rover and attach the Rover Brain and ensure it is pointing "forward". As long as it is pointing "forward" it can be placed anywhere on your rover.
+[1] Build your rover and attach the Rover Brain and ensure it is pointing "forward". As long as it is pointing "forward" it can be placed anywhere on your rover. **This forward orientation is not critical to the functioning of RoverScience, but it will provide you with a convenient "Control From Here" for driving the rover correctly forward.**
 ![image](http://i.imgur.com/S9eHqY7.png)
 ============
 [2] Right-click on the Rover Brain in-flight and click "Activate Rover Terminal".
