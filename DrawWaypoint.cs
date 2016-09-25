@@ -185,23 +185,27 @@ namespace RoverScience
 
         public void spawnObject(double longitude, double latitude)
         {
-            Debug.Log("RSR: Attempting to spawn object");
-            string randomRockName = rockObjectNames[rand.Next(rockObjectNames.Length)];
-            GameObject test = GameDatabase.Instance.GetModel("RoverScience/rock/" + randomRockName);
-            Debug.Log("Random rock name: " + randomRockName);
-            test.SetActive(true);
+            try
+            {
+                Debug.Log("RSR: Attempting to spawn object");
+                string randomRockName = rockObjectNames[rand.Next(rockObjectNames.Length)];
+                GameObject test = GameDatabase.Instance.GetModel("RoverScience/rock/" + randomRockName);
+                Debug.Log("Random rock name: " + randomRockName);
+                test.SetActive(true);
 
-            interestingObject = GameObject.Instantiate(test) as GameObject;
-            GameObject.Destroy(test);
+                interestingObject = GameObject.Instantiate(test) as GameObject;
+                GameObject.Destroy(test);
 
-            GameObject.Destroy(interestingObject.GetComponent("MeshCollider"));
-            double srfAlt = DrawWaypoint.Instance.getSurfaceAltitude(longitude, latitude);
-            interestingObject.transform.position = FlightGlobals.currentMainBody.GetWorldSurfacePosition(latitude, longitude, srfAlt);
-            interestingObject.transform.up = getUpDown(longitude, latitude, true);
+                GameObject.Destroy(interestingObject.GetComponent("MeshCollider"));
+                double srfAlt = DrawWaypoint.Instance.getSurfaceAltitude(longitude, latitude);
+                interestingObject.transform.position = FlightGlobals.currentMainBody.GetWorldSurfacePosition(latitude, longitude, srfAlt);
+                interestingObject.transform.up = getUpDown(longitude, latitude, true);
+            } catch
+            {
+                Debug.Log("rock model couldn't be found");
+            }
         }
-
-
-
+        
         private void Update()
         {
             if (marker.GetComponent<MeshRenderer>().enabled)

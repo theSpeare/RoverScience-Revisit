@@ -1,0 +1,54 @@
+﻿private LineRenderer lineBase = null;
+        private LineRenderer lineHead = null;
+        GameObject line_GO;
+        GameObject arrow_GO;
+
+        [KSPEvent(guiActive = false, guiName = "Toggle Orientation Guide", guiActiveEditor = true)]
+        private void showArrow()
+        {
+            lineBase.enabled = !lineBase.enabled;
+            lineHead.enabled = !lineHead.enabled;
+        }
+
+        public void orientationLine()
+        {
+            float lineLength = 0.5f;
+            float arrowLength = 0.25f;
+            float arrowWidth = 0.15f;
+            float lineWidth = 0.05f;
+
+            float lineOffset = 0.1f;
+
+            Vector3 lineStart = (Vector3.zero);
+            Vector3 lineEnd = (Vector3.up * lineLength);
+            Vector3 arrowEnd = (Vector3.up * (lineLength + arrowLength));
+
+            Debug.Log("Drawing Line");
+            // Create base line
+            line_GO = new GameObject("Line");
+            lineBase = line_GO.AddComponent<LineRenderer>();
+            lineBase.transform.parent = this.transform;
+            lineBase.useWorldSpace = false;
+            lineBase.transform.localPosition = (Vector3.back * (lineOffset - (lineWidth/2)));
+            lineBase.transform.localEulerAngles = Vector3.zero;
+            lineBase.material = new Material(Shader.Find("Particles/Additive"));
+            lineBase.SetColors(Color.green, Color.green);
+            lineBase.SetWidth(lineWidth, lineWidth);
+            lineBase.SetVertexCount(2);
+            lineBase.SetPosition(0, lineStart);
+            lineBase.SetPosition(1, lineEnd);
+
+            // Create line arrowhead
+            arrow_GO = new GameObject("Line");
+            lineHead = arrow_GO.AddComponent<LineRenderer>();
+            lineHead.transform.parent = line_GO.transform; // attach to line object
+            lineHead.useWorldSpace = false;
+            lineHead.transform.localPosition = Vector3.zero;
+            lineHead.transform.localEulerAngles = Vector3.zero;
+            lineHead.material = new Material(Shader.Find("Particles/Additive"));
+            lineHead.SetColors(Color.green, Color.green);
+            lineHead.SetWidth(arrowWidth, 0);
+            lineHead.SetVertexCount(2);
+            lineHead.SetPosition(0, lineEnd);
+            lineHead.SetPosition(1, arrowEnd);
+        }

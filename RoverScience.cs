@@ -15,7 +15,7 @@ namespace RoverScience
 	public class RoverScience : PartModule
 	{
 		// Not necessarily updated per build. Mostly updated per major commits
-		public readonly string RSVersion = "2.1.3";
+		public readonly string RSVersion = "2.1.4";
 		public static RoverScience Instance = null;
 		public System.Random rand = new System.Random ();
 		public ModuleScienceContainer container;
@@ -104,7 +104,7 @@ namespace RoverScience
             DrawWaypoint.Instance.toggleMarker();
         }
 
-		[KSPAction ("Activate Console", actionGroup = KSPActionGroup.None)]
+        [KSPAction ("Activate Console", actionGroup = KSPActionGroup.None)]
 		private void showGUIAction (KSPActionParam param)
 		{
 			if (IsPrimary)
@@ -150,6 +150,9 @@ namespace RoverScience
             //{
             //}
         }
+
+
+
 
 
         public override void OnStart (PartModule.StartState state)
@@ -218,7 +221,6 @@ namespace RoverScience
                     }
 				}
 			}
-
 			keyboardShortcuts ();
 		}
 		// Much credit to a.g. as his source helped to figure out how to utilize the experiment and its data
@@ -271,15 +273,16 @@ namespace RoverScience
 				if (sciData > 0.1) {
 					if (StoreScience (container, sciSubject, sciData)) {
 						container.ReviewData ();
-						Debug.Log ("Science retrieved! - " + sciData);
+                        amountOfTimesAnalyzed++;
+                        Debug.Log ("Science retrieved! - " + sciData);
 					} else {
 						Debug.Log ("Failed to add science to container!");
 					}
 				} else {
-					ScreenMessages.PostScreenMessage ("Science value was too low - deleting data!", 5, ScreenMessageStyle.UPPER_CENTER);
+
+                    ScreenMessages.PostScreenMessage ("Science value was too low - deleting data!", 5, ScreenMessageStyle.UPPER_CENTER);
 				}
 
-				amountOfTimesAnalyzed++;
 				rover.scienceSpot.reset ();
 
 			} else {
