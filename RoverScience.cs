@@ -15,7 +15,7 @@ namespace RoverScience
 	public class RoverScience : PartModule
 	{
 		// Not necessarily updated per build. Mostly updated per major commits
-		public readonly string RSVersion = "2.1.4";
+		public readonly string RSVersion = "2.2.0";
 		public static RoverScience Instance = null;
 		public System.Random rand = new System.Random ();
 		public ModuleScienceContainer container;
@@ -44,12 +44,6 @@ namespace RoverScience
 				return getUpgradeValue(RSUpgrade.maxDistance, levelMaxDistance);
             }
         }
-
-        private RoverScienceDB DB
-        {
-            get { return RoverScienceDB.Instance; }
-        }
-
 
         public RoverScienceGUI roverScienceGUI = new RoverScienceGUI();
 		public double distCounter;
@@ -121,20 +115,23 @@ namespace RoverScience
             roverScienceGUI.drawGUI();
         }
 
+        
+
         public override void OnLoad (ConfigNode vesselNode)
         {
-            Debug.Log("#X1 RoverScience OnLoad @" + DateTime.Now);
+            Debug.Log("--------------------------------> RoverScience OnLoad @" + DateTime.Now);
             Instance = this;
 
-            if (rover == null)
-            {
-                Debug.Log("rover was null, creating new rover class (OnLoad)");
-                rover = new Rover();
-            }
+            //if (rover == null)
+            //{
+                //Debug.Log("rover was null, creating new rover class (OnLoad)");
+                //rover = new Rover();
+            //}
 
            // try
-            //{
-            if (DB != null)  DB.updateRoverScience();
+           //{
+            //if (RoverScienceDB.Instance != null)
+            //RoverScienceDB.Instance.updateRoverScience();
             //}catch{
             //}
 
@@ -142,27 +139,34 @@ namespace RoverScience
 
         public override void OnSave(ConfigNode vesselNode)
         {
-            Debug.Log("RoverScience OnSave @" + DateTime.Now);
+            Debug.Log("--------------------------------> RoverScience OnSave @" + DateTime.Now);
             // try
             // {
-            if (DB != null) DB.updateDB();
+            //if (RoverScienceDB.Instance != null) 
+            //RoverScienceDB.Instance.updateDB();
             //} catch
             //{
             //}
         }
 
 
-
+        public override void OnAwake()
+        {
+            Debug.Log("--------------------------------> RoverScience OnAwake @" + DateTime.Now);
+            if (Instance == null) Instance = this;
+            if (RoverScienceDB.Instance != null) RoverScienceDB.Instance.updateRoverScience();
+        }
 
 
         public override void OnStart (PartModule.StartState state)
 		{
 			if (HighLogic.LoadedSceneIsFlight) {
 				if (IsPrimary) {
-					Debug.Log ("RoverScience 2 initiated!");
+                    Debug.Log("--------------------------------> RoverScience OnStart @" + DateTime.Now);
+                    Debug.Log ("RoverScience 2 initiated!");
 					Debug.Log ("RoverScience version: " + RSVersion);
 	
-					Instance = this;
+					if (Instance == null) Instance = this;
                     
 					Debug.Log ("RS Instance set - " + Instance);
 	
@@ -180,7 +184,7 @@ namespace RoverScience
 
                     //try
                     //{
-                    if (DB != null) DB.updateRoverScience();
+                    if (RoverScienceDB.Instance != null) RoverScienceDB.Instance.updateRoverScience();
                     //}
                     //catch { }
 
@@ -223,6 +227,13 @@ namespace RoverScience
 			}
 			keyboardShortcuts ();
 		}
+
+        public void initRover()
+        {
+            if (rover == null)
+                rover = new Rover();
+        }
+
 		// Much credit to a.g. as his source helped to figure out how to utilize the experiment and its data
 		// https://github.com/angavrilov/ksp-surface-survey/blob/master/SurfaceSurvey.cs#L276
 		public void analyzeScienceSample ()

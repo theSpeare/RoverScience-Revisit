@@ -14,7 +14,6 @@ H:\Development\KSP Mods\RoverScience-Revisit\bin\Debug\UnityEngine.xml
 H:\Development\KSP Mods\RoverScience-Revisit\obj\Debug\RoverScience.dll
 H:\Development\KSP Mods\RoverScience-Revisit\obj\Debug\RoverScience.pdb
 H:\Development\KSP Mods\RoverScience-Revisit\bin\Debug\Assembly-UnityScript.dll
-H:\Development\KSP Mods\RoverScience-Revisit\bin\Debug\KSPCore.dll
-H:\Development\KSP Mods\RoverScience-Revisit\bin\Debug\KSPUtil.dll
-H:\Development\KSP Mods\RoverScience-Revisit\bin\Debug\SaveUpgradePipeline.Core.dll
-H:\Development\KSP Mods\RoverScience-Revisit\bin\Debug\Vectrosity.dll
+H:\Development\KSP Mods\RoverScience-Revisit\bin\Debug\System.dll
+H:\Development\KSP Mods\RoverScience-Revisit\bin\Debug\UnityScript.Lang.dll
+H:\Development\KSP Mods\RoverScience-Revisit\bin\Debug\Boo.Lang.dll

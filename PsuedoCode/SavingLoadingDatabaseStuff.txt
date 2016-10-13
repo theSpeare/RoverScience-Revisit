@@ -1,0 +1,99 @@
+PSUEDOCODE FOR ROVERSCIENCE SAVE/LOAD FUNCTIONS REWRITE
+
+OBJECTIVES:
+<only do any of this if there is a RoverScience part in play>
+
+
+[SUMMARY OF OPERATION ORDER]
+[FOR LOADING]
+	<DB> Wakes
+
+	<Scenario> Loads
+
+	<RovS> Wakes
+	<RovS> Loads
+
+	<DB> Starts
+	<RovS> Starts
+
+	<RS> Saves
+	<Scenario> Saves
+
+-> Probably remove DB altogether (as a monobehaviour). Not needed.
+-> Have Scenario LOAD, grab values, and store into self (or a child class).
+-> When RoverScience starts up & loads, grab values off Scenario.
+
+[DESIRED ORDER FOR LOADING]
+	<Scenario> Loads
+	<RovS> Wakes and Loads
+	<Scenario> Saves
+
+[FOR SAVING]
+-> Just have scenario grab values off RoverScience
+-> Push values to file
+
+
+=============================
+[PSUEDOCODE - LOADING]
+
+SCENARIO
+{
+	class DB
+	{
+		classes to hold information
+	}
+	
+	LOAD()
+	{
+		<<we can grab regardless of RoverScience existence>>
+		
+		grab values off persistent/quicksave file
+		store into child class 
+	}
+	
+	SAVE()
+	{
+		<<do NOT save without RoverScience Instance present>>
+		
+		grab values off RoverScience
+		push to file
+	}
+}
+
+
+ROVERSCIENCE
+{
+	AWAKE()
+	{
+		Instantiate RoverScience shit here (instead of START)
+		
+		if not already:
+			Instance RoverScience
+	}
+
+	LOAD()
+	{
+		get SCENARIO
+		get DB
+		load values from DB into self (update)
+	}
+}
+
+
+
+** write methods for everything this time, please **
+** get ready for future refactoring **
+
+** DON'T FORGET TO CONSIDER THE SITUATION WHEN ROVERSCIENCE PART ISN'T EVEN ON **
+** don't forget null checks **
+
+============================
+
+
+
+
+
+
+
+
+

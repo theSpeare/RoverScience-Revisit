@@ -1,0 +1,43 @@
+[ROVERSCIENCE CLASS OPERATION ORDER]
+<AFTER HITTING QUICKLOAD>
+
+// DB wakes up before scenario! This is OK. It means Scenario has somewhere to store values
+[DB]--------------------------------> DB OnAwake @10/13/2016 8:49:39 PM
+
+------------------- initializing flight mode... ------------------
+
+// Scenario starts Load, hopefully stores values in DB
+[SC]--------------------------------> RS-Scenario OnLoad @10/13/2016 8:49:39 PM
+
+// RoverScience Instance should set here
+[RS]--------------------------------> RoverScience OnAwake @10/13/2016 8:49:39 PM
+[RS]--------------------------------> RoverScience OnLoad @10/13/2016 8:49:39 PM
+
+// DB start here (probably shouldn't use start in this case)
+[DB]--------------------------------> DB OnStart @10/13/2016 8:49:39 PM
+
+// RoverScience Start & Save after everything is loaded?
+[RS]--------------------------------> RoverScience OnStart @10/13/2016 8:49:39 PM
+[RS]--------------------------------> RoverScience OnSave @10/13/2016 8:49:40 PM
+
+// Scenario seems to save after everything is loaded and done
+[SC]--------------------------------> RS-Scenario OnSave @10/13/2016 8:49:40 PM
+
+<START OF PLAY>
+<HIT PAUSE>
+
+
+[SUMMARY]
+<DB> Wakes
+
+<Scenario> Loads
+
+<RS> Wakes
+<RS> Loads
+
+<DB> Starts
+<RS> Starts
+
+<RS> Saves
+<Scenario> Saves
+

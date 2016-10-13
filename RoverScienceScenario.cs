@@ -6,15 +6,10 @@ using UnityEngine;
 
 namespace RoverScience
 {
-    [KSPAddon(KSPAddon.Startup.Flight, true)]
+    [KSPAddon(KSPAddon.Startup.Flight, false)]
     public class RoverScienceDB : MonoBehaviour
     {
         public static RoverScienceDB Instance;
-
-        public RoverScienceDB()
-        {
-            Instance = this;
-        }
 
         private RoverScience roverScience
         {
@@ -39,17 +34,26 @@ namespace RoverScience
         public List<string> console_x_y_show = new List<string>();
         public List<string> anomaliesAnalyzed = new List<string>();
 
+        void Start()
+        {
+            Debug.Log("--------------------------------> DB OnStart @" + DateTime.Now);
+            //Instance = this;
+        }
+
+        void Awake()
+        {
+            Debug.Log("--------------------------------> DB OnAwake @" + DateTime.Now);
+            Instance = this;
+        }
+
         public void updateRoverScience()
         {
-            // updateRoverScience grabs values from DB
-
-            //string debugS = "";
-            //debugS += "\nupdateRS ATTEMPT: @" + DateTime.Now;
-            //debugS += "\nupdateRS - roverScience: " + roverScience;
-            //debugS += "\nupdateRS - roverScience.rover: " + roverScience.rover;
-            //Debug.Log(debugS);
-            //debugPrintAll("update[RS] - debugPrintAll");
-
+            // updateRoverScience pushes values from DB to RoverScience
+            Debug.Log("Start of DB.updateRoverScience()");
+            if (roverScience == null)
+            {
+                Debug.Log("RoverScience Instance is NULL, skipping updateRoverScience() - " + DateTime.Now);
+            }
             roverScience.levelMaxDistance = levelMaxDistance;
             roverScience.levelPredictionAccuracy = levelPredictionAccuracy;
             roverScience.levelAnalyzedDecay = levelAnalyzedDecay;
@@ -60,23 +64,13 @@ namespace RoverScience
                 GUI.consoleGUI.isOpen = Convert.ToBoolean(console_x_y_show[2]);
             }
 
-            
-
-
             roverScience.rover.anomaliesAnalyzed = anomaliesAnalyzed;
             Debug.Log("RSR: (RS) Successfully updated RoverScience");
         }
 
         public void updateDB()
         {
-            // updateDB grabs values from RoverScience (updates)
-
-            //string debugS = "";
-            //debugS += "\nupdateDB ATTEMPT: @" + DateTime.Now;
-            //debugS += "\nupdateDB - roverScience: " + roverScience;
-            //debugS += "\nupdateDB - roverScience.rover: " + roverScience.rover;
-            //debugS += "\nupdateDB - GUI:" + GUI;
-            //Debug.Log(debugS);
+            // updateDB pulls values from RoverScience to here
 
             debugPrintAll("update[DB] - debugPrintAll");
 
@@ -127,7 +121,6 @@ namespace RoverScience
                 return RoverScience.Instance;
             }
         }
-       
 
         private RoverScienceGUI.GUIClass consoleGUI
         {
@@ -141,16 +134,11 @@ namespace RoverScience
 
         public override void OnLoad(ConfigNode node)
         {
-            if (RoverScience.Instance == null) return; // do not do if RoverScience not do
-
-            Debug.Log("#X1 RoverScienceScenario OnLoad @" + DateTime.Now);
-
+            Debug.Log("--------------------------------> RS-Scenario OnLoad @" + DateTime.Now);
             Debug.Log("#### RS: Attempted to LOAD FILE VIA KSPSCENARIO v2");
 
 
-
             loadAnomaliesAnalyzed(node); // load anomalies
-            
 
             // LEVELMAXDISTANCE
             if (node.HasValue("levelMaxDistance"))
@@ -200,19 +188,25 @@ namespace RoverScience
                 node.AddValue("console_x_y_show", string.Join(",", DB.console_x_y_show.ToArray()));
             }
 
-            if (RoverScience.Instance.rover != null)
+            Debug.Log("TRIED TO LOAD WITHIN ROVERSCIENCE SCENARIO, HERE ARE THE VALUES I GOT THAT ARE INSIDE DB RIGHT NOW (AFTER ATTEMPTING TO LOAD)");
+            DB.debugPrintAll();
+            Debug.Log("============END PRINT ALL============");
+
+            if (RoverScience.Instance != null)
             {
+                if (RoverScience.Instance.rover == null)
+                {
+                    RoverScience.Instance.initRover();
+                }
                 DB.updateRoverScience();
             }
-
-            
         }
 
         public override void OnSave(ConfigNode node)
         {
-            if (RoverScience.Instance == null) return; // do not do if RoverScience not do
+            Debug.Log("--------------------------------> RS-Scenario OnSave @" + DateTime.Now);
 
-            Debug.Log("RoverScienceScenario OnSave @" + DateTime.Now);
+            if (RoverScience.Instance == null) return; // do not do if RoverScience not do
 
             saveAnomaliesAnalyzed(node);
 
