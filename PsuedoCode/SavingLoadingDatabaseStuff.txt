@@ -32,7 +32,6 @@ OBJECTIVES:
 -> Just have scenario grab values off RoverScience
 -> Push values to file
 
-
 =============================
 [PSUEDOCODE - LOADING]
 
@@ -43,12 +42,17 @@ SCENARIO
 		classes to hold information
 	}
 	
+	AWAKE()
+	{
+		init Instance
+	}
+	
 	LOAD()
 	{
 		<<we can grab regardless of RoverScience existence>>
 		
-		grab values off persistent/quicksave file
-		store into child class 
+		grab values off persistent/quicksave file 
+		store into child class
 	}
 	
 	SAVE()

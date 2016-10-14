@@ -30,6 +30,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Anomalies.cs" />
+    <Compile Include="Database.cs" />
     <Compile Include="DrawWaypoint.cs" />
     <Compile Include="LandingSpot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

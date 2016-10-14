@@ -29,6 +29,14 @@ namespace RoverScience
         public readonly int maximum_predictionAccuracy = 5;
         public readonly int maximum_levelAnalyzedDecay = 5;
 
+        public static bool Exists
+        {
+            get
+            {
+                return (Instance != null);
+            }
+        }
+
         public double currentPredictionAccuracy
         {
             get
@@ -115,46 +123,50 @@ namespace RoverScience
             roverScienceGUI.drawGUI();
         }
 
-        
-
         public override void OnLoad (ConfigNode vesselNode)
         {
             Debug.Log("--------------------------------> RoverScience OnLoad @" + DateTime.Now);
-            Instance = this;
+            Database DB = null;
 
-            //if (rover == null)
-            //{
-                //Debug.Log("rover was null, creating new rover class (OnLoad)");
-                //rover = new Rover();
-            //}
+            try
+            {
+                DB = RoverScienceScenario.Instance.DB;
+                try
+                {
+                    levelMaxDistance = DB.levelMaxDistance;
+                    levelPredictionAccuracy = DB.levelPredictionAccuracy;
+                    levelAnalyzedDecay = DB.levelAnalyzedDecay;
+                    rover.anomaliesAnalyzed = DB.anomaliesAnalyzed;
 
-           // try
-           //{
-            //if (RoverScienceDB.Instance != null)
-            //RoverScienceDB.Instance.updateRoverScience();
-            //}catch{
-            //}
+                    if (DB.console_x_y_show.Any())
+                    {
+                        roverScienceGUI.setWindowPos(roverScienceGUI.consoleGUI, (float)Convert.ToDouble(DB.console_x_y_show[0]), (float)Convert.ToDouble(DB.console_x_y_show[1]));
+                        roverScienceGUI.consoleGUI.isOpen = Convert.ToBoolean(DB.console_x_y_show[2]);
+                    }
+                } catch
+                {
+                    Debug.Log("[RS] Error: <RoverScience> OnLoad");
+                }
+            }
+            catch
+            {
+                Debug.Log("[RS] RSR DB is still not alive");
+            }
+
 
         }
 
         public override void OnSave(ConfigNode vesselNode)
         {
             Debug.Log("--------------------------------> RoverScience OnSave @" + DateTime.Now);
-            // try
-            // {
-            //if (RoverScienceDB.Instance != null) 
-            //RoverScienceDB.Instance.updateDB();
-            //} catch
-            //{
-            //}
         }
 
 
         public override void OnAwake()
         {
             Debug.Log("--------------------------------> RoverScience OnAwake @" + DateTime.Now);
-            if (Instance == null) Instance = this;
-            if (RoverScienceDB.Instance != null) RoverScienceDB.Instance.updateRoverScience();
+            Instance = this;
+            rover = new Rover();
         }
 
 
@@ -165,31 +177,17 @@ namespace RoverScience
                     Debug.Log("--------------------------------> RoverScience OnStart @" + DateTime.Now);
                     Debug.Log ("RoverScience 2 initiated!");
 					Debug.Log ("RoverScience version: " + RSVersion);
-	
-					if (Instance == null) Instance = this;
-                    
-					Debug.Log ("RS Instance set - " + Instance);
-	
+
+                    //Instance = this;
+                    //rover = new Rover();
+
 					container = part.Modules ["ModuleScienceContainer"] as ModuleScienceContainer;
 					command = part.Modules ["ModuleCommand"] as ModuleCommand;
 
-                    // Must be called here otherwise they won't run their constructors for some reason
-                    if (rover == null)
-                    {
-                        Debug.Log("rover was null, creating new rover class (OnStart)");
-                        rover = new Rover();
-                    }
 					rover.scienceSpot = new ScienceSpot (Instance);
 					rover.landingSpot = new LandingSpot (Instance);
 
-                    //try
-                    //{
-                    if (RoverScienceDB.Instance != null) RoverScienceDB.Instance.updateRoverScience();
-                    //}
-                    //catch { }
-
                     rover.setClosestAnomaly(vessel.mainBody.bodyName);
-
 
                 } else {
 					Debug.Log ("ONSTART - Not primary");
@@ -605,6 +603,7 @@ namespace RoverScience
             ScreenMessages.PostScreenMessage(("" + upgradeName + " has been upgraded"),
                     3, ScreenMessageStyle.UPPER_CENTER);
         }
+        
 
         public void setScienceMaxRadiusBoost(int maxRadius)
         {
