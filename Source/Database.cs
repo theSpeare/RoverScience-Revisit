@@ -1,23 +1,13 @@
 ﻿using System;
 
-
 namespace RoverScience
 {
-	public class Database
+	public static class Database
 	{
-		Upgrade maxDistanceScan;
-		Upgrade predictionAccuracy;
-		Upgrade analyzeRepeatEffect;
-
-
-
-		public Database()
-		{
-			maxDistanceScan = new Upgrade(1, 5);
-
-
-		}
-
+        // main database to be accessed from everywhere
+        // this class will contain upgrades and settings and other information
+        
+        public static Upgrades upgrades = new Upgrades();
+        public static Anomalies anomalies = new Anomalies();
 	}
-	
 }
