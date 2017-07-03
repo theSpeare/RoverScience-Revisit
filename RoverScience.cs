@@ -230,7 +230,7 @@ namespace RoverScience
 			if (rover.scienceSpotReached) {
 
 				ScienceExperiment sciExperiment = ResearchAndDevelopment.GetExperiment ("RoverScienceExperiment");
-				ScienceSubject sciSubject = ResearchAndDevelopment.GetExperimentSubject (sciExperiment, ExperimentSituations.SrfLanded, vessel.mainBody, "");
+				ScienceSubject sciSubject = ResearchAndDevelopment.GetExperimentSubject(sciExperiment, ExperimentSituations.SrfLanded, vessel.mainBody, "", "");
 
 				// 20 science per data
 				sciSubject.subjectValue = 20;
